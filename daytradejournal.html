@@ -4,787 +4,57 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daytrading Journal Suite - Pro</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --bg-primary: #0f0f23;
-            --bg-secondary: #1a1a2e;
-            --bg-tertiary: #16213e;
-            --accent-primary: #00ff88;
-            --accent-secondary: #0066ff;
-            --accent-danger: #ff3366;
-            --accent-warning: #ffa500;
-            --text-primary: #e4e4e7;
-            --text-secondary: #a1a1aa;
-            --border-color: #27272a;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            overflow-x: hidden;
-        }
-
-        /* Header */
-        .header {
-            background: var(--bg-secondary);
-            padding: 1rem 2rem;
-            border-bottom: 2px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .logo-section {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .account-selector {
-            position: relative;
-        }
-
-        .account-dropdown {
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            color: var(--text-primary);
-            padding: 0.5rem 2.5rem 0.5rem 1rem;
-            border-radius: 4px;
-            font-size: 0.9rem;
-            cursor: pointer;
-            appearance: none;
-            min-width: 200px;
-        }
-
-        .account-dropdown:focus {
-            outline: none;
-            border-color: var(--accent-primary);
-        }
-
-        .account-selector::after {
-            content: '▼';
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            pointer-events: none;
-            color: var(--text-secondary);
-            font-size: 0.7rem;
-        }
-
-        .add-account-btn {
-            background: transparent;
-            border: 1px solid var(--border-color);
-            color: var(--accent-primary);
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            margin-left: 0.5rem;
-            transition: all 0.3s;
-        }
-
-        .add-account-btn:hover {
-            border-color: var(--accent-primary);
-            background: rgba(0, 255, 136, 0.1);
-        }
-
-        .header-stats {
-            display: flex;
-            gap: 2rem;
-        }
-
-        .stat-item {
-            text-align: center;
-        }
-
-        .stat-label {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-        }
-
-        .stat-value {
-            font-size: 1.25rem;
-            font-weight: bold;
-        }
-
-        .stat-value.positive { color: var(--accent-primary); }
-        .stat-value.negative { color: var(--accent-danger); }
-
-        /* Navigation Tabs */
-        .nav-tabs {
-            background: var(--bg-secondary);
-            padding: 0 2rem;
-            display: flex;
-            gap: 0.5rem;
-            border-bottom: 1px solid var(--border-color);
-            overflow-x: auto;
-        }
-
-        .tab-btn {
-            background: transparent;
-            border: none;
-            color: var(--text-secondary);
-            padding: 1rem 1.5rem;
-            cursor: pointer;
-            border-bottom: 2px solid transparent;
-            transition: all 0.3s;
-            white-space: nowrap;
-        }
-
-        .tab-btn:hover {
-            color: var(--text-primary);
-        }
-
-        .tab-btn.active {
-            color: var(--accent-primary);
-            border-bottom-color: var(--accent-primary);
-        }
-
-        /* Main Container */
-        .container {
-            padding: 2rem;
-            max-width: 1800px;
-            margin: 0 auto;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        /* Grid Layouts */
-        .grid-2 {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .grid-3 {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .grid-4 {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        /* Cards */
-        .card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 1.5rem;
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .card-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-        }
-
-        /* Forms */
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-
-        .form-input, .form-select, .form-textarea {
-            width: 100%;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            color: var(--text-primary);
-            padding: 0.75rem;
-            border-radius: 4px;
-            font-size: 0.95rem;
-        }
-
-        .form-textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
-
-        /* Buttons */
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.95rem;
-            font-weight: 500;
-            transition: all 0.3s;
-        }
-
-        .btn-primary {
-            background: var(--accent-primary);
-            color: var(--bg-primary);
-        }
-
-        .btn-primary:hover {
-            opacity: 0.9;
-            transform: translateY(-2px);
-        }
-
-        .btn-secondary {
-            background: var(--bg-tertiary);
-            color: var(--text-primary);
-            border: 1px solid var(--border-color);
-        }
-
-        .btn-danger {
-    background: #a03a45;
-    color: white;
-}
-
-.btn-danger:hover {
-    background: #c82333;
-}
-
-        .btn-small {
-            padding: 0.5rem 1rem;
-            font-size: 0.85rem;
-        }
-
-        /* Table */
-        .table-container {
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            padding: 1rem;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        th {
-            background: var(--bg-tertiary);
-            color: var(--text-secondary);
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        tr:hover {
-            background: var(--bg-tertiary);
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .badge-long {
-            background: rgba(0, 255, 136, 0.2);
-            color: var(--accent-primary);
-        }
-
-        .badge-short {
-            background: rgba(255, 51, 102, 0.2);
-            color: var(--accent-danger);
-        }
-
-        .badge-win {
-            background: rgba(0, 255, 136, 0.2);
-            color: var(--accent-primary);
-        }
-
-        .badge-loss {
-            background: rgba(255, 51, 102, 0.2);
-            color: var(--accent-danger);
-        }
-
-        .badge-warning {
-            background: rgba(255, 165, 0, 0.2);
-            color: var(--accent-warning);
-        }
-
-        /* Modern Chart Styles */
-        .chart-container {
-            position: relative;
-            height: 300px;
-            margin-top: 1rem;
-        }
-
-        .chart-controls {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-            justify-content: flex-end;
-        }
-
-        .chart-btn {
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            color: var(--text-secondary);
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            transition: all 0.3s;
-        }
-
-        .chart-btn.active {
-            background: var(--accent-primary);
-            color: var(--bg-primary);
-            border-color: var(--accent-primary);
-        }
-
-        .chart-btn:hover:not(.active) {
-            border-color: var(--accent-primary);
-            color: var(--text-primary);
-        }
-
-        .modern-chart {
-            display: flex;
-            align-items: flex-end;
-            justify-content: space-between;
-            height: 100%;
-            gap: 4px;
-            padding: 1rem 0;
-        }
-
-        .chart-bar-wrapper {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-end;
-            height: 100%;
-            position: relative;
-        }
-
-        .chart-bar-modern {
-            width: 100%;
-            background: linear-gradient(180deg, var(--accent-primary), rgba(0, 255, 136, 0.3));
-            border-radius: 4px 4px 0 0;
-            position: relative;
-            transition: all 0.3s;
-            min-height: 4px;
-        }
-
-        .chart-bar-modern:hover {
-            opacity: 0.8;
-            transform: translateY(-2px);
-        }
-
-        .chart-bar-modern.negative {
-            background: linear-gradient(180deg, var(--accent-danger), rgba(255, 51, 102, 0.3));
-        }
-
-        .chart-bar-value {
-            position: absolute;
-            top: -25px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 0.75rem;
-            font-weight: 600;
-            white-space: nowrap;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .chart-bar-wrapper:hover .chart-bar-value {
-            opacity: 1;
-        }
-
-        .chart-bar-label {
-            margin-top: 0.5rem;
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            white-space: nowrap;
-        }
-
-        /* Metrics Grid */
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .metric-card {
-            background: var(--bg-tertiary);
-            padding: 1.5rem;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            transition: all 0.3s;
-        }
-
-        .metric-card:hover {
-            border-color: var(--accent-primary);
-            transform: translateY(-2px);
-        }
-
-        .metric-label {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            margin-bottom: 0.5rem;
-        }
-
-        .metric-value {
-            font-size: 1.8rem;
-            font-weight: bold;
-        }
-
-        .metric-change {
-            font-size: 0.85rem;
-            margin-top: 0.5rem;
-        }
-
-        .metric-change.positive {
-            color: var(--accent-primary);
-        }
-
-        .metric-change.negative {
-            color: var(--accent-danger);
-        }
-
-        /* Progress Bar */
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: var(--bg-tertiary);
-            border-radius: 4px;
-            overflow: hidden;
-            margin-top: 0.5rem;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
-            transition: width 0.3s;
-        }
-
-        /* Data Analysis Specific Styles */
-        .analysis-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid var(--border-color);
-        }
-
-        .analysis-summary {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .summary-stat {
-            text-align: center;
-            padding: 1rem;
-            background: var(--bg-tertiary);
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-        }
-
-        .summary-stat-value {
-            font-size: 2rem;
-            font-weight: bold;
-            margin-bottom: 0.25rem;
-        }
-
-        .summary-stat-label {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-        }
-
-        .comparison-row {
-            display: grid;
-            grid-template-columns: 200px 1fr 100px;
-            gap: 1rem;
-            padding: 1rem;
-            background: var(--bg-tertiary);
-            border-radius: 4px;
-            margin-bottom: 0.5rem;
-            align-items: center;
-        }
-
-        .comparison-label {
-            font-weight: 500;
-        }
-
-        .comparison-bar {
-            height: 24px;
-            background: var(--bg-primary);
-            border-radius: 4px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .comparison-bar-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
-            transition: width 0.5s;
-            display: flex;
-            align-items: center;
-            padding: 0 0.5rem;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .comparison-value {
-            text-align: right;
-            font-weight: 600;
-        }
-
-        /* Pie Chart Styles */
-        .pie-chart-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 2rem;
-        }
-
-        .pie-chart {
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            position: relative;
-        }
-
-        .pie-legend {
-            margin-left: 2rem;
-        }
-
-        .pie-legend-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 0.75rem;
-        }
-
-        .pie-legend-color {
-            width: 16px;
-            height: 16px;
-            border-radius: 2px;
-        }
-
-        .pie-legend-label {
-            flex: 1;
-            font-size: 0.9rem;
-        }
-
-        .pie-legend-value {
-            font-weight: 600;
-        }
-
-        /* Session Config */
-        .session-config {
-            display: grid;
-            gap: 1rem;
-        }
-
-        .session-item {
-            display: grid;
-            grid-template-columns: 150px 100px 100px auto;
-            gap: 1rem;
-            align-items: center;
-            padding: 1rem;
-            background: var(--bg-tertiary);
-            border-radius: 4px;
-        }
-
-        /* Strategy Flag */
-        .strategy-flag {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.25rem;
-            cursor: help;
-        }
-
-        .flag-icon {
-            color: var(--accent-warning);
-            font-size: 1.1rem;
-        }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: var(--bg-secondary);
-            padding: 2rem;
-            border-radius: 8px;
-            max-width: 600px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-            border: 1px solid var(--border-color);
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            font-size: 1.5rem;
-            cursor: pointer;
-            padding: 0;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
-        }
-
-        .modal-close:hover {
-            color: var(--accent-danger);
-        }
-
-        /* Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: var(--bg-secondary);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--border-color);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--accent-primary);
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .header-stats {
-                display: none;
-            }
-
-            .grid-2, .grid-3, .grid-4 {
-                grid-template-columns: 1fr;
-            }
-
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-
-            .comparison-row {
-                grid-template-columns: 1fr;
-            }
-
-            .session-item {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="theme-dark">
     <!-- Header -->
     <div class="header">
-        <div class="logo-section">
-            <div class="logo">📊 Trading Journal Pro</div>
-            <div class="account-selector">
-    <select class="account-dropdown" id="accountSelector" onchange="switchAccount()">
-        <option value="default">Main Account</option>
-    </select>
-</div>
-<button class="add-account-btn" onclick="addNewAccount()">+ Add Account</button>
-<button class="add-account-btn" onclick="editAccount()" style="background: transparent; border-color: var(--accent-secondary); color: var(--accent-secondary);">✏️ Edit</button>
-<button class="add-account-btn" onclick="deleteAccount()" style="background: transparent; border-color: var(--accent-danger); color: var(--accent-danger);">🗑️ Delete</button>
+        <div class="header-left">
+            <div class="logo-section">
+                <div class="logo">📊 Trading Journal Pro</div>
+            </div>
+            <div class="account-block">
+                <div>
+                    <label class="form-label" for="accountSelector">Account</label>
+                    <div class="account-selector">
+                        <select class="account-dropdown" id="accountSelector" onchange="switchAccount()">
+                            <option value="default">Main Account</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="account-actions">
+                    <span class="account-actions-label">Account actions</span>
+                    <div class="segmented">
+                        <button class="add-account-btn btn btn-ghost btn-small" onclick="addNewAccount()">Add</button>
+                        <button class="add-account-btn btn btn-ghost btn-small" onclick="editAccount()">Edit</button>
+                        <button class="add-account-btn btn btn-ghost btn-small" onclick="deleteAccount()">Delete</button>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="header-stats">
-            <div class="stat-item">
-                <div class="stat-label">Daily P&L</div>
-                <div class="stat-value positive" id="headerDailyPnL">+$0.00</div>
+        <div class="header-right">
+            <div class="header-stats">
+                <div class="stat-chip">
+                    <div class="stat-label">Daily P&L</div>
+                    <div class="stat-value positive" id="headerDailyPnL">+$0.00</div>
+                </div>
+                <div class="stat-chip">
+                    <div class="stat-label">Weekly P&L</div>
+                    <div class="stat-value positive" id="headerWeeklyPnL">+$0.00</div>
+                </div>
+                <div class="stat-chip">
+                    <div class="stat-label">Win Rate</div>
+                    <div class="stat-value" id="headerWinRate">0%</div>
+                </div>
+                <div class="stat-chip">
+                    <div class="stat-label">Total Trades</div>
+                    <div class="stat-value" id="headerTotalTrades">0</div>
+                </div>
             </div>
-            <div class="stat-item">
-                <div class="stat-label">Weekly P&L</div>
-                <div class="stat-value positive" id="headerWeeklyPnL">+$0.00</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-label">Win Rate</div>
-                <div class="stat-value" id="headerWinRate">0%</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-label">Total Trades</div>
-                <div class="stat-value" id="headerTotalTrades">0</div>
-            </div>
+            <button class="btn btn-ghost btn-small theme-toggle" id="themeToggle" onclick="toggleTheme()">🌓 Theme</button>
         </div>
     </div>
 
@@ -805,32 +75,32 @@
         <!-- DASHBOARD TAB -->
         <div class="tab-content active" id="dashboard">
             <div class="metrics-grid">
-                <div class="metric-card">
+                <div class="metric-card kpi-card">
                     <div class="metric-label">Total P&L</div>
                     <div class="metric-value positive" id="totalPnL">$0.00</div>
                     <div class="metric-change positive" id="totalPnLChange">+0% this month</div>
                 </div>
-                <div class="metric-card">
+                <div class="metric-card kpi-card">
                     <div class="metric-label">Win Rate</div>
                     <div class="metric-value" id="winRate">0%</div>
                     <div class="progress-bar">
                         <div class="progress-fill" id="winRateProgress" style="width: 0%"></div>
                     </div>
                 </div>
-                <div class="metric-card">
+                <div class="metric-card kpi-card">
                     <div class="metric-label">Total Trades</div>
                     <div class="metric-value" id="totalTrades">0</div>
                     <div class="metric-change" id="tradesChange">0 this week</div>
                 </div>
-                <div class="metric-card">
+                <div class="metric-card kpi-card">
                     <div class="metric-label">Avg Win</div>
                     <div class="metric-value positive" id="avgWin">$0.00</div>
                 </div>
-                <div class="metric-card">
+                <div class="metric-card kpi-card">
                     <div class="metric-label">Avg Loss</div>
                     <div class="metric-value negative" id="avgLoss">$0.00</div>
                 </div>
-                <div class="metric-card">
+                <div class="metric-card kpi-card">
                     <div class="metric-label">Profit Factor</div>
                     <div class="metric-value" id="profitFactor">0.00</div>
                 </div>
@@ -839,7 +109,10 @@
             <div class="grid-2">
                 <div class="card">
                     <div class="card-header">
-                        <div class="card-title">P&L Performance</div>
+                        <div>
+                            <div class="card-title">P&L Performance</div>
+                            <div class="chart-legend">Net performance by period</div>
+                        </div>
                         <div class="chart-controls">
                             <button class="chart-btn active" onclick="switchPnLChart('daily')">Daily</button>
                             <button class="chart-btn" onclick="switchPnLChart('weekly')">Weekly</button>
@@ -853,10 +126,13 @@
 
                 <div class="card">
                     <div class="card-header">
-                        <div class="card-title">Recent Trades</div>
+                        <div>
+                            <div class="card-title">Recent Trades</div>
+                            <div class="card-subtitle">Latest activity across this account</div>
+                        </div>
                     </div>
                     <div class="table-container">
-                        <table>
+                        <table class="recent-trades-table">
                             <thead>
                                 <tr>
                                     <th>Symbol</th>
@@ -867,7 +143,12 @@
                             </thead>
                             <tbody id="recentTradesTable">
                                 <tr>
-                                    <td colspan="4" style="text-align: center; color: var(--text-secondary);">No trades yet</td>
+                                    <td colspan="4">
+                                        <div class="empty-state">
+                                            <span>📭</span>
+                                            <div>No trades yet</div>
+                                        </div>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -881,8 +162,9 @@
                         <div class="card-title">Today's Goals</div>
                     </div>
                     <div id="todayGoals">
-                        <div style="color: var(--text-secondary); text-align: center; padding: 2rem;">
-                            Set your daily goals in Settings
+                        <div class="empty-state">
+                            <span>✅</span>
+                            <div>Set your daily goals in Settings</div>
                         </div>
                     </div>
                 </div>
@@ -892,8 +174,9 @@
                         <div class="card-title">Top Performing Setups</div>
                     </div>
                     <div id="topSetups">
-                        <div style="color: var(--text-secondary); text-align: center; padding: 2rem;">
-                            No data yet
+                        <div class="empty-state">
+                            <span>📈</span>
+                            <div>No data yet</div>
                         </div>
                     </div>
                 </div>
@@ -915,137 +198,155 @@
             <div class="grid-2">
                 <div class="card">
                     <div class="card-header">
-                        <div class="card-title">Trade Details</div>
+                        <div>
+                            <div class="card-title">New Trade</div>
+                            <div class="card-subtitle">Capture execution details with structured notes</div>
+                        </div>
                     </div>
                     <form id="tradeForm">
-                        <div class="form-group">
-                            <label class="form-label">Date & Time</label>
-                            <input type="datetime-local" class="form-input" id="tradeDateTime" required>
+                        <div class="form-section">
+                            <div class="form-section-title">Core trade</div>
+                            <div class="form-group">
+                                <label class="form-label">Date & Time</label>
+                                <input type="datetime-local" class="form-input" id="tradeDateTime" required>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Symbol</label>
+                                    <select class="form-select" id="tradeSymbol" required>
+                                        <option value="NQ">NQ (E-mini Nasdaq-100)</option>
+                                        <option value="ES">ES (E-mini S&P 500)</option>
+                                        <option value="MNQ">MNQ (Micro E-mini Nasdaq-100)</option>
+                                        <option value="MES">MES (Micro E-mini S&P 500)</option>
+                                        <option value="GC">GC (Gold)</option>
+                                        <option value="MGC">MGC (Micro Gold)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Direction</label>
+                                    <select class="form-select" id="tradeDirection" required>
+                                        <option value="long">Long</option>
+                                        <option value="short">Short</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Entry Price</label>
+                                    <input type="number" step="0.01" class="form-input" id="tradeEntry" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Exit Price</label>
+                                    <input type="number" step="0.01" class="form-input" id="tradeExit" required>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Shares/Contracts</label>
+                                    <input type="number" class="form-input" id="tradeQuantity" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">P&L</label>
+                                    <input type="number" step="0.01" class="form-input" id="tradePnL" readonly>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="form-row">
+                        <div class="form-section">
+                            <div class="form-section-title">Risk</div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Stop Loss</label>
+                                    <input type="number" step="0.01" class="form-input" id="tradeStopLoss">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Take Profit</label>
+                                    <input type="number" step="0.01" class="form-input" id="tradeTakeProfit">
+                                </div>
+                            </div>
+
                             <div class="form-group">
-                                <label class="form-label">Symbol</label>
-                                <select class="form-select" id="tradeSymbol" required>
-                                    <option value="NQ">NQ (E-mini Nasdaq-100)</option>
-                                    <option value="ES">ES (E-mini S&P 500)</option>
-                                    <option value="MNQ">MNQ (Micro E-mini Nasdaq-100)</option>
-                                    <option value="MES">MES (Micro E-mini S&P 500)</option>
-                                    <option value="GC">GC (Gold)</option>
-                                    <option value="MGC">MGC (Micro Gold)</option>
+                                <label class="form-label">Setup/Strategy</label>
+                                <select class="form-select" id="tradeSetup">
+                                    <option value="breakout">Breakout</option>
+                                    <option value="pullback">Pullback</option>
+                                    <option value="reversal">Reversal</option>
+                                    <option value="momentum">Momentum</option>
+                                    <option value="scalp">Scalp</option>
+                                    <option value="swing">Swing</option>
+                                    <option value="other">Other</option>
                                 </select>
                             </div>
+
                             <div class="form-group">
-                                <label class="form-label">Direction</label>
-                                <select class="form-select" id="tradeDirection" required>
-                                    <option value="long">Long</option>
-                                    <option value="short">Short</option>
+                                <label class="form-label">Timeframe</label>
+                                <select class="form-select" id="tradeTimeframe">
+                                    <option value="1m">1 Minute</option>
+                                    <option value="5m">5 Minutes</option>
+                                    <option value="15m">15 Minutes</option>
+                                    <option value="30m">30 Minutes</option>
+                                    <option value="1h">1 Hour</option>
+                                    <option value="4h">4 Hours</option>
+                                    <option value="1d">Daily</option>
                                 </select>
                             </div>
-                        </div>
 
-                        <div class="form-row">
                             <div class="form-group">
-                                <label class="form-label">Entry Price</label>
-                                <input type="number" step="0.01" class="form-input" id="tradeEntry" required>
+                                <label class="form-label">Followed Strategy Plan?</label>
+                                <select class="form-select" id="tradeFollowedPlan">
+                                    <option value="yes">Yes - Followed Plan</option>
+                                    <option value="no">No - Deviation from Plan</option>
+                                </select>
                             </div>
+
+                            <div class="form-group" id="deviationReasonGroup" style="display: none;">
+                                <label class="form-label">Reason for Deviation</label>
+                                <textarea class="form-textarea" id="tradeDeviationReason" placeholder="Why didn't you follow your strategy?"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <div class="form-section-title">Plan & notes</div>
                             <div class="form-group">
-                                <label class="form-label">Exit Price</label>
-                                <input type="number" step="0.01" class="form-input" id="tradeExit" required>
+                                <label class="form-label">Trade Notes</label>
+                                <textarea class="form-textarea" id="tradeNotes" placeholder="What was your reasoning? What did you see?"></textarea>
                             </div>
-                        </div>
 
-                        <div class="form-row">
                             <div class="form-group">
-                                <label class="form-label">Shares/Contracts</label>
-                                <input type="number" class="form-input" id="tradeQuantity" required>
+                                <label class="form-label">Mistakes Made</label>
+                                <textarea class="form-textarea" id="tradeMistakes" placeholder="What could you have done better?"></textarea>
                             </div>
+                        </div>
+
+                        <div class="form-section">
+                            <div class="form-section-title">Psychology</div>
                             <div class="form-group">
-                                <label class="form-label">P&L</label>
-                                <input type="number" step="0.01" class="form-input" id="tradePnL" readonly>
+                                <label class="form-label">Emotional State</label>
+                                <div class="emotion-grid">
+                                    <button type="button" class="btn btn-secondary emotion-pill" data-emotion="confident" onclick="selectEmotion(this)">😎 Confident</button>
+                                    <button type="button" class="btn btn-secondary emotion-pill" data-emotion="calm" onclick="selectEmotion(this)">😌 Calm</button>
+                                    <button type="button" class="btn btn-secondary emotion-pill" data-emotion="anxious" onclick="selectEmotion(this)">😰 Anxious</button>
+                                    <button type="button" class="btn btn-secondary emotion-pill" data-emotion="fomo" onclick="selectEmotion(this)">😤 FOMO</button>
+                                    <button type="button" class="btn btn-secondary emotion-pill" data-emotion="revenge" onclick="selectEmotion(this)">😡 Revenge</button>
+                                    <button type="button" class="btn btn-secondary emotion-pill" data-emotion="disciplined" onclick="selectEmotion(this)">🎯 Disciplined</button>
+                                </div>
+                                <input type="hidden" id="tradeEmotion">
                             </div>
                         </div>
 
-                        <div class="form-row">
+                        <div class="form-section">
+                            <div class="form-section-title">Attachments</div>
                             <div class="form-group">
-                                <label class="form-label">Stop Loss</label>
-                                <input type="number" step="0.01" class="form-input" id="tradeStopLoss">
+                                <label class="form-label">Trade Screenshots</label>
+                                <input type="file" id="tradeImages" multiple accept="image/*" style="display: none;">
+                                <button type="button" class="btn btn-secondary" onclick="document.getElementById('tradeImages').click()">
+                                    📷 Upload Screenshots
+                                </button>
+                                <div id="tradeImagesPreview" class="image-preview-grid"></div>
                             </div>
-                            <div class="form-group">
-                                <label class="form-label">Take Profit</label>
-                                <input type="number" step="0.01" class="form-input" id="tradeTakeProfit">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Setup/Strategy</label>
-                            <select class="form-select" id="tradeSetup">
-                                <option value="breakout">Breakout</option>
-                                <option value="pullback">Pullback</option>
-                                <option value="reversal">Reversal</option>
-                                <option value="momentum">Momentum</option>
-                                <option value="scalp">Scalp</option>
-                                <option value="swing">Swing</option>
-                                <option value="other">Other</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Timeframe</label>
-                            <select class="form-select" id="tradeTimeframe">
-                                <option value="1m">1 Minute</option>
-                                <option value="5m">5 Minutes</option>
-                                <option value="15m">15 Minutes</option>
-                                <option value="30m">30 Minutes</option>
-                                <option value="1h">1 Hour</option>
-                                <option value="4h">4 Hours</option>
-                                <option value="1d">Daily</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Followed Strategy Plan?</label>
-                            <select class="form-select" id="tradeFollowedPlan">
-                                <option value="yes">Yes - Followed Plan</option>
-                                <option value="no">No - Deviation from Plan</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group" id="deviationReasonGroup" style="display: none;">
-                            <label class="form-label">Reason for Deviation</label>
-                            <textarea class="form-textarea" id="tradeDeviationReason" placeholder="Why didn't you follow your strategy?"></textarea>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Trade Notes</label>
-                            <textarea class="form-textarea" id="tradeNotes" placeholder="What was your reasoning? What did you see?"></textarea>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Mistakes Made</label>
-                            <textarea class="form-textarea" id="tradeMistakes" placeholder="What could you have done better?"></textarea>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Emotional State</label>
-                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 0.5rem;">
-                                <button type="button" class="btn btn-secondary" style="padding: 0.75rem;" data-emotion="confident" onclick="selectEmotion(this)">😎 Confident</button>
-                                <button type="button" class="btn btn-secondary" style="padding: 0.75rem;" data-emotion="calm" onclick="selectEmotion(this)">😌 Calm</button>
-                                <button type="button" class="btn btn-secondary" style="padding: 0.75rem;" data-emotion="anxious" onclick="selectEmotion(this)">😰 Anxious</button>
-                                <button type="button" class="btn btn-secondary" style="padding: 0.75rem;" data-emotion="fomo" onclick="selectEmotion(this)">😤 FOMO</button>
-                                <button type="button" class="btn btn-secondary" style="padding: 0.75rem;" data-emotion="revenge" onclick="selectEmotion(this)">😡 Revenge</button>
-                                <button type="button" class="btn btn-secondary" style="padding: 0.75rem;" data-emotion="disciplined" onclick="selectEmotion(this)">🎯 Disciplined</button>
-                            </div>
-                            <input type="hidden" id="tradeEmotion">
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Trade Screenshots</label>
-                            <input type="file" id="tradeImages" multiple accept="image/*" style="display: none;">
-                            <button type="button" class="btn btn-secondary" onclick="document.getElementById('tradeImages').click()">
-                                📷 Upload Screenshots
-                            </button>
-                            <div id="tradeImagesPreview" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem; margin-top: 1rem;"></div>
                         </div>
 
                         <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
@@ -1126,39 +427,44 @@
         <!-- JOURNAL TAB -->
         <div class="tab-content" id="journal">
             <div class="card" style="margin-bottom: 1.5rem;">
-                <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
-                    <input type="date" class="form-input" id="filterDateFrom" placeholder="From Date" style="max-width: 200px;">
-                    <input type="date" class="form-input" id="filterDateTo" placeholder="To Date" style="max-width: 200px;">
-                    <select class="form-select" id="filterSymbol" style="max-width: 200px;">
-                        <option value="">All Symbols</option>
-                    </select>
-                    <select class="form-select" id="filterSetup" style="max-width: 200px;">
-                        <option value="">All Setups</option>
-                        <option value="breakout">Breakout</option>
-                        <option value="pullback">Pullback</option>
-                        <option value="reversal">Reversal</option>
-                        <option value="momentum">Momentum</option>
-                        <option value="scalp">Scalp</option>
-                        <option value="swing">Swing</option>
-                    </select>
-                    <select class="form-select" id="filterResult" style="max-width: 200px;">
-                        <option value="">All Results</option>
-                        <option value="win">Wins Only</option>
-                        <option value="loss">Losses Only</option>
-                    </select>
-                    <select class="form-select" id="filterCompliance" style="max-width: 200px;">
-                        <option value="">All Trades</option>
-                        <option value="yes">Followed Strategy</option>
-                        <option value="no">Deviated from Strategy</option>
-                    </select>
-                    <button class="btn btn-primary btn-small" onclick="applyFilters()">Apply Filters</button>
-                    <button class="btn btn-secondary btn-small" onclick="clearFilters()">Clear</button>
+                <div class="filter-toolbar">
+                    <div class="filter-toolbar-row">
+                        <input type="date" class="form-input" id="filterDateFrom" placeholder="From Date" style="max-width: 200px;">
+                        <input type="date" class="form-input" id="filterDateTo" placeholder="To Date" style="max-width: 200px;">
+                        <select class="form-select" id="filterSymbol" style="max-width: 200px;">
+                            <option value="">All Symbols</option>
+                        </select>
+                        <select class="form-select" id="filterSetup" style="max-width: 200px;">
+                            <option value="">All Setups</option>
+                            <option value="breakout">Breakout</option>
+                            <option value="pullback">Pullback</option>
+                            <option value="reversal">Reversal</option>
+                            <option value="momentum">Momentum</option>
+                            <option value="scalp">Scalp</option>
+                            <option value="swing">Swing</option>
+                        </select>
+                        <select class="form-select" id="filterResult" style="max-width: 200px;">
+                            <option value="">All Results</option>
+                            <option value="win">Wins Only</option>
+                            <option value="loss">Losses Only</option>
+                        </select>
+                        <select class="form-select" id="filterCompliance" style="max-width: 200px;">
+                            <option value="">All Trades</option>
+                            <option value="yes">Followed Strategy</option>
+                            <option value="no">Deviated from Strategy</option>
+                        </select>
+                    </div>
+                    <div class="filter-toolbar-row">
+                        <button class="btn btn-primary btn-small" onclick="applyFilters()">Apply Filters</button>
+                        <button class="btn btn-secondary btn-small" onclick="clearFilters()">Clear</button>
+                        <div class="applied-filters">Tip: combine filters to pinpoint your highest edge setups.</div>
+                    </div>
                 </div>
             </div>
 
             <div class="card">
                 <div class="table-container">
-                    <table>
+                    <table class="journal-table">
                         <thead>
                             <tr>
                                 <th>Date</th>
@@ -1175,8 +481,11 @@
                         </thead>
                         <tbody id="journalTable">
                             <tr>
-                                <td colspan="10" style="text-align: center; color: var(--text-secondary); padding: 3rem;">
-                                    No trades recorded yet. Add your first trade!
+                                <td colspan="10">
+                                    <div class="empty-state">
+                                        <span>📓</span>
+                                        <div>No trades recorded yet. Add your first trade!</div>
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>
@@ -1668,7 +977,7 @@
 
         <!-- SETTINGS TAB -->
         <div class="tab-content" id="settings">
-            <div class="grid-2">
+            <div class="settings-grid">
                 <div class="card">
                     <div class="card-header">
                         <div class="card-title">Account Settings</div>
@@ -1754,11 +1063,14 @@
                 <div class="card-header">
                     <div class="card-title">Data Management</div>
                 </div>
-                <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem;">
                     <button class="btn btn-primary" onclick="exportData()">📥 Export All Data (JSON)</button>
                     <button class="btn btn-primary" onclick="exportCSV()">📊 Export to CSV</button>
                     <button class="btn btn-secondary" onclick="importData()">📤 Import Data</button>
+                </div>
+                <div class="danger-zone">
                     <button class="btn btn-danger" onclick="clearAllData()">🗑️ Clear All Data</button>
+                    <div class="help-text">This permanently removes all stored trades, notes, strategies, and settings.</div>
                 </div>
                 <input type="file" id="importFile" accept=".json" style="display: none;">
             </div>
@@ -1929,6 +1241,7 @@
 
         // ========== INITIALIZATION ==========
         document.addEventListener('DOMContentLoaded', function() {
+            initializeTheme();
             initializeTabs();
             initializeAccountSelector();
             initializeTradeForm();
@@ -1944,6 +1257,30 @@
 	    renderTradingRules();
 	    updateSetupDropdown();
         });
+
+        // ========== THEME TOGGLE ==========
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('uiTheme');
+            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+            applyTheme(theme);
+        }
+
+        function applyTheme(theme) {
+            const body = document.body;
+            body.classList.toggle('theme-dark', theme === 'dark');
+            localStorage.setItem('uiTheme', theme);
+
+            const toggleBtn = document.getElementById('themeToggle');
+            if (toggleBtn) {
+                toggleBtn.textContent = theme === 'dark' ? '🌙 Dark' : '☀️ Light';
+            }
+        }
+
+        function toggleTheme() {
+            const isDark = document.body.classList.contains('theme-dark');
+            applyTheme(isDark ? 'light' : 'dark');
+        }
 
         // ========== TAB NAVIGATION ==========
         function initializeTabs() {
@@ -2204,14 +1541,10 @@
 
         function selectEmotion(btn) {
             document.querySelectorAll('[data-emotion]').forEach(b => {
-                b.style.background = 'var(--bg-tertiary)';
-                b.style.borderColor = 'var(--border-color)';
-                b.style.color = 'var(--text-primary)';
+                b.classList.remove('is-selected');
             });
-            
-            btn.style.background = 'var(--accent-primary)';
-            btn.style.borderColor = 'var(--accent-primary)';
-            btn.style.color = 'var(--bg-primary)';
+
+            btn.classList.add('is-selected');
             
             document.getElementById('tradeEmotion').value = btn.dataset.emotion;
         }
@@ -2262,7 +1595,7 @@
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     const div = document.createElement('div');
-                    div.style.cssText = 'width: 100%; height: 100px; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: 4px; overflow: hidden;';
+                    div.className = 'image-preview-card';
                     div.innerHTML = `<img src="${e.target.result}" style="width: 100%; height: 100%; object-fit: cover;">`;
                     preview.appendChild(div);
                 };
@@ -2303,9 +1636,7 @@
             document.getElementById('tradeForm').reset();
             setDefaultDateTime();
             document.querySelectorAll('[data-emotion]').forEach(btn => {
-                btn.style.background = 'var(--bg-tertiary)';
-                btn.style.borderColor = 'var(--border-color)';
-                btn.style.color = 'var(--text-primary)';
+                btn.classList.remove('is-selected');
             });
             document.getElementById('tradeImagesPreview').innerHTML = '';
             document.getElementById('deviationReasonGroup').style.display = 'none';
