@@ -926,7 +926,14 @@
                         <div class="form-row">
                             <div class="form-group">
                                 <label class="form-label">Symbol</label>
-                                <input type="text" class="form-input" id="tradeSymbol" placeholder="AAPL" required>
+                                <select class="form-select" id="tradeSymbol" required>
+                                    <option value="NQ">NQ (E-mini Nasdaq-100)</option>
+                                    <option value="ES">ES (E-mini S&P 500)</option>
+                                    <option value="MNQ">MNQ (Micro E-mini Nasdaq-100)</option>
+                                    <option value="MES">MES (Micro E-mini S&P 500)</option>
+                                    <option value="GC">GC (Gold)</option>
+                                    <option value="MGC">MGC (Micro Gold)</option>
+                                </select>
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Direction</label>
@@ -1903,6 +1910,15 @@
             ]
         };
 
+        const futuresContractSpecs = {
+            NQ: { pointValue: 20, tickSize: 0.25, tickValue: 5 },
+            ES: { pointValue: 50, tickSize: 0.25, tickValue: 12.5 },
+            MNQ: { pointValue: 2, tickSize: 0.25, tickValue: 0.5 },
+            MES: { pointValue: 5, tickSize: 0.25, tickValue: 1.25 },
+            GC: { pointValue: 100, tickSize: 0.1, tickValue: 10 },
+            MGC: { pointValue: 10, tickSize: 0.1, tickValue: 1 }
+        };
+
         // Initialize strategies for current account if needed
         if (!strategies[currentAccount]) {
             strategies[currentAccount] = [];
@@ -2154,9 +2170,13 @@
         // ========== TRADE FORM ==========
         function initializeTradeForm() {
             // Auto-calculate P&L
-            ['tradeEntry', 'tradeExit', 'tradeQuantity', 'tradeDirection'].forEach(id => {
+            ['tradeEntry', 'tradeExit', 'tradeQuantity', 'tradeDirection', 'tradeSymbol'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.addEventListener('input', calculatePnL);
+            });
+            ['tradeDirection', 'tradeSymbol'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.addEventListener('change', calculatePnL);
             });
 
             // Show/hide deviation reason
@@ -2201,12 +2221,15 @@
             const exit = parseFloat(document.getElementById('tradeExit').value) || 0;
             const quantity = parseFloat(document.getElementById('tradeQuantity').value) || 0;
             const direction = document.getElementById('tradeDirection').value;
+            const symbol = document.getElementById('tradeSymbol').value;
+            const contractSpecs = futuresContractSpecs[symbol] || { pointValue: 1, tickSize: 1, tickValue: 1 };
+            const pointValue = contractSpecs.pointValue;
 
             let pnl = 0;
             if (direction === 'long') {
-                pnl = (exit - entry) * quantity;
+                pnl = (exit - entry) * pointValue * quantity;
             } else {
-                pnl = (entry - exit) * quantity;
+                pnl = (entry - exit) * pointValue * quantity;
             }
 
             document.getElementById('tradePnL').value = pnl.toFixed(2);
@@ -2226,7 +2249,7 @@
             if (settings.startingCapital && settings.riskPerTrade && entry && stopLoss) {
                 const risk = Math.abs(entry - stopLoss);
                 const riskAmount = settings.startingCapital * (settings.riskPerTrade / 100);
-                const positionSize = Math.floor(riskAmount / risk);
+                const positionSize = Math.floor(riskAmount / (risk * pointValue));
                 document.getElementById('quickPositionSize').textContent = positionSize;
             }
         }
@@ -2253,7 +2276,7 @@
             const trade = {
                 id: Date.now(),
                 date: document.getElementById('tradeDateTime').value,
-                symbol: document.getElementById('tradeSymbol').value.toUpperCase(),
+                symbol: document.getElementById('tradeSymbol').value,
                 direction: document.getElementById('tradeDirection').value,
                 entry: parseFloat(document.getElementById('tradeEntry').value),
                 exit: parseFloat(document.getElementById('tradeExit').value),
