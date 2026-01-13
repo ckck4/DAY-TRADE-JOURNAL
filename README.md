@@ -19,5 +19,18 @@ The Day Trading Journal Suite is a single-page, browser-based trading journal de
 3. Record trades and notes as you trade.
 4. Review analytics, sessions, and playbook insights to refine your edge.
 
-## Data storage
-All data is stored locally in the browser using `localStorage`. Export your data regularly if you want backups or plan to move between machines.
+## Data storage & migration
+The journal now uses **IndexedDB** for trades, settings, and saved views, including image attachments as Blobs. LocalStorage remains as a compatibility layer for accounts, strategies, rules, notes, and UI state. On first run after upgrading, existing `localStorage` trades are migrated into IndexedDB once and tagged with a `migration_done` flag so data is not duplicated.
+
+## Export / Import
+- **Export JSON** includes trades (with images), accounts, settings, strategies, rules, notes, and saved views.
+- **Export CSV** provides a flat trades export for spreadsheets.
+- **Encrypted Backup** uses client-side PBKDF2 + AES-GCM to encrypt your data (password is never stored).
+- **Import JSON / Encrypted** replaces existing data and restores trades into IndexedDB.
+
+## Changelog (Premium upgrades)
+- IndexedDB-backed storage with attachment support, plus one-time localStorage migration.
+- Pro analytics cards (drawdown, expectancy, rule violation cost) on the dashboard.
+- Monthly P/L heatmap + strategy performance table in the Analytics tab.
+- Saved views in the Journal tab (save, update, delete filters).
+- Pro exports: JSON/CSV, encrypted backups, and a printable monthly report.
