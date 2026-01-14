@@ -782,8 +782,8 @@
                 <div class="card-header">
                     <div class="card-title">Trading Heatmap - Time of Day Performance</div>
                 </div>
-                <div style="display: grid; grid-template-columns: repeat(24, 1fr); gap: 2px; margin-top: 1rem;" id="timeHeatmap"></div>
-                <div style="display: flex; justify-content: space-between; margin-top: 1rem; font-size: 0.85rem; color: var(--text-secondary);">
+                <div id="timeHeatmap" class="time-heatmap"></div>
+                <div class="time-heatmap-labels">
                     <span>12 AM</span>
                     <span>6 AM</span>
                     <span>12 PM</span>
@@ -797,7 +797,7 @@
                     <div class="card-header">
                         <div class="card-title">Monthly P/L Heatmap</div>
                     </div>
-                    <div id="monthlyHeatmap" class="monthly-heatmap"></div>
+                    <div id="monthlyHeatmap" class="monthly-heatmap-wrapper"></div>
                 </div>
 
                 <div class="card">
@@ -2609,13 +2609,16 @@
             });
 
             const container = document.getElementById('dayOfWeekAnalysis');
-            const maxPnL = Math.max(...Object.values(dayStats).map(s => Math.abs(s.pnl)), 1);
 
             container.innerHTML = Object.entries(dayStats).map(([day, stats]) => {
                 if (stats.total === 0) return '';
                 
-                const winRate = ((stats.wins / stats.total) * 100).toFixed(1);
-                const barWidth = (Math.abs(stats.pnl) / maxPnL) * 100;
+                const winRate = stats.total > 0 ? (stats.wins / stats.total) * 100 : 0;
+                const barWidth = winRate;
+                const winRateLabel = winRate.toFixed(1);
+                const barGradient = winRate >= 50
+                    ? 'linear-gradient(90deg, var(--accent-primary), var(--accent-secondary))'
+                    : 'linear-gradient(90deg, var(--accent-danger), #cc0033)';
 
                 return `
                     <div class="comparison-row">
@@ -2624,8 +2627,8 @@
                             <div style="font-size: 0.75rem; color: var(--text-secondary);">${stats.total} trades</div>
                         </div>
                         <div class="comparison-bar">
-                            <div class="comparison-bar-fill" style="width: ${barWidth}%; background: ${stats.pnl >= 0 ? 'linear-gradient(90deg, var(--accent-primary), var(--accent-secondary))' : 'linear-gradient(90deg, var(--accent-danger), #cc0033)'}">
-                                WR: ${winRate}%
+                            <div class="comparison-bar-fill" style="width: ${barWidth}%; background: ${barGradient}">
+                                WR: ${winRateLabel}%
                             </div>
                         </div>
                         <div class="comparison-value" style="color: ${stats.pnl >= 0 ? 'var(--accent-primary)' : 'var(--accent-danger)'}">
@@ -2650,12 +2653,18 @@
             });
 
             const container = document.getElementById('longShortAnalysis');
-            const maxPnL = Math.max(Math.abs(longStats.pnl), Math.abs(shortStats.pnl), 1);
-
-            const longWR = longStats.total > 0 ? ((longStats.wins / longStats.total) * 100).toFixed(1) : 0;
-            const shortWR = shortStats.total > 0 ? ((shortStats.wins / shortStats.total) * 100).toFixed(1) : 0;
-            const longBarWidth = (Math.abs(longStats.pnl) / maxPnL) * 100;
-            const shortBarWidth = (Math.abs(shortStats.pnl) / maxPnL) * 100;
+            const longWinRate = longStats.total > 0 ? (longStats.wins / longStats.total) * 100 : 0;
+            const shortWinRate = shortStats.total > 0 ? (shortStats.wins / shortStats.total) * 100 : 0;
+            const longWR = longWinRate.toFixed(1);
+            const shortWR = shortWinRate.toFixed(1);
+            const longBarWidth = longWinRate;
+            const shortBarWidth = shortWinRate;
+            const longGradient = longWinRate >= 50
+                ? 'linear-gradient(90deg, var(--accent-primary), var(--accent-secondary))'
+                : 'linear-gradient(90deg, var(--accent-danger), #cc0033)';
+            const shortGradient = shortWinRate >= 50
+                ? 'linear-gradient(90deg, var(--accent-primary), var(--accent-secondary))'
+                : 'linear-gradient(90deg, var(--accent-danger), #cc0033)';
 
             container.innerHTML = `
                 <div class="comparison-row">
@@ -2664,7 +2673,7 @@
                         <div style="font-size: 0.75rem; color: var(--text-secondary);">${longStats.total} trades</div>
                     </div>
                     <div class="comparison-bar">
-                        <div class="comparison-bar-fill" style="width: ${longBarWidth}%; background: ${longStats.pnl >= 0 ? 'linear-gradient(90deg, var(--accent-primary), var(--accent-secondary))' : 'linear-gradient(90deg, var(--accent-danger), #cc0033)'}">
+                        <div class="comparison-bar-fill" style="width: ${longBarWidth}%; background: ${longGradient}">
                             WR: ${longWR}%
                         </div>
                     </div>
@@ -2678,7 +2687,7 @@
                         <div style="font-size: 0.75rem; color: var(--text-secondary);">${shortStats.total} trades</div>
                     </div>
                     <div class="comparison-bar">
-                        <div class="comparison-bar-fill" style="width: ${shortBarWidth}%; background: ${shortStats.pnl >= 0 ? 'linear-gradient(90deg, var(--accent-primary), var(--accent-secondary))' : 'linear-gradient(90deg, var(--accent-danger), #cc0033)'}">
+                        <div class="comparison-bar-fill" style="width: ${shortBarWidth}%; background: ${shortGradient}">
                             WR: ${shortWR}%
                         </div>
                     </div>
@@ -2736,11 +2745,14 @@
 
             const container = document.getElementById('contractAnalysis');
             const sortedSizes = Object.entries(sizeStats).sort((a, b) => b[1].pnl - a[1].pnl);
-            const maxPnL = Math.max(...sortedSizes.map(s => Math.abs(s[1].pnl)), 1);
 
             container.innerHTML = sortedSizes.map(([size, stats]) => {
-                const winRate = ((stats.wins / stats.total) * 100).toFixed(1);
-                const barWidth = (Math.abs(stats.pnl) / maxPnL) * 100;
+                const winRate = stats.total > 0 ? (stats.wins / stats.total) * 100 : 0;
+                const barWidth = winRate;
+                const winRateLabel = winRate.toFixed(1);
+                const barGradient = winRate >= 50
+                    ? 'linear-gradient(90deg, var(--accent-primary), var(--accent-secondary))'
+                    : 'linear-gradient(90deg, var(--accent-danger), #cc0033)';
 
                 return `
                     <div class="comparison-row">
@@ -2749,8 +2761,8 @@
                             <div style="font-size: 0.75rem; color: var(--text-secondary);">${stats.total} trades</div>
                         </div>
                         <div class="comparison-bar">
-                            <div class="comparison-bar-fill" style="width: ${barWidth}%; background: ${stats.pnl >= 0 ? 'linear-gradient(90deg, var(--accent-primary), var(--accent-secondary))' : 'linear-gradient(90deg, var(--accent-danger), #cc0033)'}">
-                                WR: ${winRate}%
+                            <div class="comparison-bar-fill" style="width: ${barWidth}%; background: ${barGradient}">
+                                WR: ${winRateLabel}%
                             </div>
                         </div>
                         <div class="comparison-value" style="color: ${stats.pnl >= 0 ? 'var(--accent-primary)' : 'var(--accent-danger)'}">
@@ -2788,8 +2800,6 @@
                 });
             });
 
-            const maxPnL = Math.max(...Object.values(sessionStats).map(s => Math.abs(s.pnl)), 1);
-
             container.innerHTML = Object.entries(sessionStats).map(([session, stats]) => {
                 if (stats.total === 0) {
                     return `
@@ -2806,8 +2816,12 @@
                     `;
                 }
 
-                const winRate = ((stats.wins / stats.total) * 100).toFixed(1);
-                const barWidth = (Math.abs(stats.pnl) / maxPnL) * 100;
+                const winRate = stats.total > 0 ? (stats.wins / stats.total) * 100 : 0;
+                const barWidth = winRate;
+                const winRateLabel = winRate.toFixed(1);
+                const barGradient = winRate >= 50
+                    ? 'linear-gradient(90deg, var(--accent-primary), var(--accent-secondary))'
+                    : 'linear-gradient(90deg, var(--accent-danger), #cc0033)';
 
                 return `
                     <div class="comparison-row">
@@ -2816,8 +2830,8 @@
                             <div style="font-size: 0.75rem; color: var(--text-secondary);">${stats.total} trades</div>
                         </div>
                         <div class="comparison-bar">
-                            <div class="comparison-bar-fill" style="width: ${barWidth}%; background: ${stats.pnl >= 0 ? 'linear-gradient(90deg, var(--accent-primary), var(--accent-secondary))' : 'linear-gradient(90deg, var(--accent-danger), #cc0033)'}">
-                                WR: ${winRate}%
+                            <div class="comparison-bar-fill" style="width: ${barWidth}%; background: ${barGradient}">
+                                WR: ${winRateLabel}%
                             </div>
                         </div>
                         <div class="comparison-value" style="color: ${stats.pnl >= 0 ? 'var(--accent-primary)' : 'var(--accent-danger)'}">
@@ -2946,11 +2960,14 @@
 
             const container = document.getElementById('timeframeAnalysis');
             const sortedTimeframes = Object.entries(timeframeStats).sort((a, b) => b[1].pnl - a[1].pnl);
-            const maxPnL = Math.max(...sortedTimeframes.map(s => Math.abs(s[1].pnl)), 1);
 
             container.innerHTML = sortedTimeframes.map(([timeframe, stats]) => {
-                const winRate = ((stats.wins / stats.total) * 100).toFixed(1);
-                const barWidth = (Math.abs(stats.pnl) / maxPnL) * 100;
+                const winRate = stats.total > 0 ? (stats.wins / stats.total) * 100 : 0;
+                const barWidth = winRate;
+                const winRateLabel = winRate.toFixed(1);
+                const barGradient = winRate >= 50
+                    ? 'linear-gradient(90deg, var(--accent-primary), var(--accent-secondary))'
+                    : 'linear-gradient(90deg, var(--accent-danger), #cc0033)';
 
                 return `
                     <div class="comparison-row">
@@ -2959,8 +2976,8 @@
                             <div style="font-size: 0.75rem; color: var(--text-secondary);">${stats.total} trades</div>
                         </div>
                         <div class="comparison-bar">
-                            <div class="comparison-bar-fill" style="width: ${barWidth}%; background: ${stats.pnl >= 0 ? 'linear-gradient(90deg, var(--accent-primary), var(--accent-secondary))' : 'linear-gradient(90deg, var(--accent-danger), #cc0033)'}">
-                                WR: ${winRate}%
+                            <div class="comparison-bar-fill" style="width: ${barWidth}%; background: ${barGradient}">
+                                WR: ${winRateLabel}%
                             </div>
                         </div>
                         <div class="comparison-value" style="color: ${stats.pnl >= 0 ? 'var(--accent-primary)' : 'var(--accent-danger)'}">
@@ -3223,8 +3240,41 @@
             });
         }
 
+        function parseThemeColor(value) {
+            if (!value) return { r: 0, g: 0, b: 0 };
+            const trimmed = value.trim();
+            if (trimmed.startsWith('rgb')) {
+                const nums = trimmed.match(/\d+/g) || [0, 0, 0];
+                return { r: Number(nums[0]), g: Number(nums[1]), b: Number(nums[2]) };
+            }
+            const hex = trimmed.replace('#', '');
+            if (hex.length === 3) {
+                const [r, g, b] = hex.split('').map(ch => parseInt(ch + ch, 16));
+                return { r, g, b };
+            }
+            if (hex.length === 6) {
+                return {
+                    r: parseInt(hex.slice(0, 2), 16),
+                    g: parseInt(hex.slice(2, 4), 16),
+                    b: parseInt(hex.slice(4, 6), 16)
+                };
+            }
+            return { r: 0, g: 0, b: 0 };
+        }
+
+        function mixThemeColors(base, neutral, weight) {
+            const mix = (channelBase, channelNeutral) =>
+                Math.round(channelNeutral + (channelBase - channelNeutral) * weight);
+            return {
+                r: mix(base.r, neutral.r),
+                g: mix(base.g, neutral.g),
+                b: mix(base.b, neutral.b)
+            };
+        }
+
         function renderTimeHeatmap() {
             const heatmap = document.getElementById('timeHeatmap');
+            if (!heatmap) return;
             heatmap.innerHTML = '';
 
             const hourlyPnL = Array(24).fill(0);
@@ -3237,22 +3287,40 @@
             });
 
             const maxPnL = Math.max(...hourlyPnL.map(Math.abs), 1);
+            const styles = getComputedStyle(document.documentElement);
+            const positive = parseThemeColor(styles.getPropertyValue('--accent-primary'));
+            const negative = parseThemeColor(styles.getPropertyValue('--accent-danger'));
+            const neutral = parseThemeColor(styles.getPropertyValue('--surface-2'));
+
+            const gradientStops = hourlyPnL.map((pnl, index) => {
+                let color = neutral;
+                if (hourlyCount[index] > 0) {
+                    const intensity = Math.min(Math.abs(pnl) / maxPnL, 1);
+                    const weight = 0.15 + Math.pow(intensity, 0.75) * 0.85;
+                    const base = pnl >= 0 ? positive : negative;
+                    color = mixThemeColors(base, neutral, weight);
+                }
+                const start = (index / 24) * 100;
+                const end = ((index + 1) / 24) * 100;
+                const rgb = `rgb(${color.r}, ${color.g}, ${color.b})`;
+                return `${rgb} ${start}%, ${rgb} ${end}%`;
+            });
+
+            heatmap.style.background = `linear-gradient(90deg, ${gradientStops.join(', ')})`;
+
+            const overlay = document.createElement('div');
+            overlay.className = 'time-heatmap-overlay';
 
             for (let i = 0; i < 24; i++) {
                 const cell = document.createElement('div');
-                cell.style.cssText = 'aspect-ratio: 1; background: var(--bg-tertiary); border-radius: 2px; cursor: pointer; transition: all 0.3s;';
-                
-                if (hourlyCount[i] > 0) {
-                    const intensity = Math.ceil((Math.abs(hourlyPnL[i]) / maxPnL) * 5);
-                    const color = hourlyPnL[i] >= 0 ? 'var(--accent-primary)' : 'var(--accent-danger)';
-                    const opacity = intensity * 0.2;
-                    cell.style.background = color;
-                    cell.style.opacity = opacity;
-                    cell.title = `${i}:00 - ${formatCurrency(hourlyPnL[i])} (${hourlyCount[i]} trades)`;
-                }
-                
-                heatmap.appendChild(cell);
+                cell.className = 'time-heatmap-cell';
+                cell.title = hourlyCount[i] > 0
+                    ? `${i}:00 — ${formatCurrency(hourlyPnL[i])} (${hourlyCount[i]} trades)`
+                    : `${i}:00 — No trades`;
+                overlay.appendChild(cell);
             }
+
+            heatmap.appendChild(overlay);
         }
 
         function renderMonthlyHeatmap() {
@@ -3260,26 +3328,43 @@
             if (!container) return;
             container.innerHTML = '';
 
-            if (trades.length === 0) {
-                container.innerHTML = '<div class="report-empty">No trades yet for this month.</div>';
-                return;
-            }
-
             const now = new Date();
             const year = now.getFullYear();
             const month = now.getMonth();
             const monthKey = `${year}-${String(month + 1).padStart(2, '0')}`;
-            const dailyData = TradeJournalAnalytics.dailyAggregation(trades);
+            const monthlyTrades = trades.filter(trade => trade.date.startsWith(monthKey));
+            const dailyData = TradeJournalAnalytics.dailyAggregation(monthlyTrades);
 
             const dailyPnL = {};
             dailyData.forEach(day => {
-                if (day.date.startsWith(monthKey)) {
-                    dailyPnL[day.date] = day.pnl;
-                }
+                dailyPnL[day.date] = { pnl: day.pnl, count: day.count };
             });
 
-            const values = Object.values(dailyPnL);
-            const maxPnL = Math.max(...values.map(value => Math.abs(value)), 1);
+            const values = Object.values(dailyPnL).map(day => Math.abs(day.pnl));
+            const maxPnL = Math.max(...values, 1);
+
+            const monthLabel = now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+            const stats = calculateStats(monthlyTrades);
+
+            const summary = document.createElement('div');
+            summary.className = 'monthly-heatmap-summary';
+            summary.innerHTML = `
+                <div class="monthly-heatmap-title">${monthLabel}</div>
+                <div class="monthly-heatmap-metrics">
+                    <div class="monthly-heatmap-metric">
+                        <span>Total P/L</span>
+                        <strong class="${stats.totalPnL >= 0 ? 'positive' : 'negative'}">${formatCurrency(stats.totalPnL)}</strong>
+                    </div>
+                    <div class="monthly-heatmap-metric">
+                        <span>Trades</span>
+                        <strong>${monthlyTrades.length}</strong>
+                    </div>
+                    <div class="monthly-heatmap-metric">
+                        <span>Win Rate</span>
+                        <strong>${stats.winRate.toFixed(1)}%</strong>
+                    </div>
+                </div>
+            `;
 
             const grid = document.createElement('div');
             grid.className = 'monthly-heatmap';
@@ -3297,14 +3382,16 @@
 
             for (let day = 1; day <= daysInMonth; day += 1) {
                 const dateStr = `${monthKey}-${String(day).padStart(2, '0')}`;
-                const pnl = dailyPnL[dateStr] || 0;
+                const data = dailyPnL[dateStr] || { pnl: 0, count: 0 };
                 const cell = document.createElement('div');
                 cell.className = 'heatmap-cell';
-                cell.title = `${dateStr}: ${formatCurrency(pnl)}`;
+                cell.title = data.count > 0
+                    ? `${dateStr}: ${formatCurrency(data.pnl)} (${data.count} trades)`
+                    : `${dateStr}: No trades`;
 
-                if (pnl !== 0) {
-                    const intensity = Math.min(Math.abs(pnl) / maxPnL, 1);
-                    cell.style.background = pnl > 0 ? 'var(--accent-primary)' : 'var(--accent-danger)';
+                if (data.count > 0) {
+                    const intensity = Math.min(Math.abs(data.pnl) / maxPnL, 1);
+                    cell.style.background = data.pnl >= 0 ? 'var(--accent-primary)' : 'var(--accent-danger)';
                     cell.style.opacity = 0.25 + intensity * 0.75;
                     cell.style.color = '#fff';
                 }
@@ -3315,9 +3402,9 @@
 
             const legend = document.createElement('div');
             legend.className = 'heatmap-legend';
-            const monthLabel = now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-            legend.innerHTML = `<span>${monthLabel}</span><span>Intensity shows P/L impact</span>`;
+            legend.innerHTML = `<span>Daily P/L intensity</span><span>Hover cells for details</span>`;
 
+            container.appendChild(summary);
             container.appendChild(grid);
             container.appendChild(legend);
         }
