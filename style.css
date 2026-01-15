@@ -88,6 +88,10 @@ body.theme-dark :focus-visible {
   color: var(--danger);
 }
 
+.neutral {
+  color: var(--muted);
+}
+
 .app-layout {
   display: grid;
   grid-template-columns: 260px minmax(0, 1fr);
@@ -122,6 +126,12 @@ body.theme-dark :focus-visible {
   display: grid;
   place-items: center;
   letter-spacing: 0.04em;
+}
+
+.brand-icon svg {
+  width: 26px;
+  height: 26px;
+  display: block;
 }
 
 .brand-text span {
@@ -348,6 +358,7 @@ body.theme-dark .tab-btn.active {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   gap: 1.5rem;
+  margin-top: 1.5rem;
 }
 
 .span-8 {
@@ -407,6 +418,7 @@ body.theme-dark .tab-btn.active {
 
 .chart-container {
   min-height: 260px;
+  padding: 0.5rem 0.25rem 0.75rem;
 }
 
 .modern-chart {
@@ -416,7 +428,8 @@ body.theme-dark .tab-btn.active {
   height: 240px;
   width: 100%;
   overflow-x: auto;
-  padding-bottom: 0.5rem;
+  padding: 0.5rem 0.5rem 0.75rem;
+  scroll-padding-inline: 0.5rem;
 }
 
 .behavior-grid {
@@ -494,6 +507,42 @@ body.theme-dark .tab-btn.active {
   color: var(--muted);
 }
 
+.calendar-day {
+  aspect-ratio: 1;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+  padding: 0.4rem;
+  text-align: center;
+  gap: 0.25rem;
+}
+
+.calendar-day.positive {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+.calendar-day.negative {
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+.calendar-day:hover {
+  border-color: var(--accent-primary);
+}
+
+.calendar-day .calendar-day-value {
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
 .calendar-day-detail {
   margin-top: 1rem;
 }
@@ -542,6 +591,57 @@ body.theme-dark .tab-btn.active {
 
 .table-container {
   overflow-x: auto;
+}
+
+.strategy-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.strategy-table th,
+.strategy-table td {
+  padding: 0.75rem 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.strategy-table th {
+  text-align: left;
+  font-size: 0.75rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  background: var(--surface);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.strategy-table tbody tr:nth-child(odd) {
+  background: rgba(148, 163, 184, 0.05);
+}
+
+.strategy-table tbody tr:hover {
+  background: rgba(37, 99, 235, 0.08);
+}
+
+.strategy-table th.text-right,
+.strategy-table td.text-right {
+  text-align: right;
+}
+
+.table-sort {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+}
+
+.table-sort.is-active {
+  color: var(--text);
 }
 
 .recent-trades-table,
@@ -1027,15 +1127,18 @@ body.theme-dark .tab-btn.active {
   align-items: end;
   justify-items: center;
   height: 100%;
-  min-width: 72px;
+  min-width: clamp(64px, 10vw, 120px);
+  flex: 1 0 clamp(64px, 10vw, 120px);
+  padding-top: 1.25rem;
 }
 
 .chart-bar-modern {
-  width: 36px;
+  width: clamp(24px, 4vw, 42px);
   background: linear-gradient(180deg, var(--primary), var(--primary2));
   border-radius: 10px 10px 4px 4px;
   display: flex;
   justify-content: center;
+  position: relative;
   min-height: 6px;
 }
 
@@ -1044,14 +1147,127 @@ body.theme-dark .tab-btn.active {
 }
 
 .chart-bar-value {
-  transform: translateY(-6px);
-  font-size: 0.7rem;
+  position: absolute;
+  top: -1.1rem;
+  font-size: clamp(0.65rem, 0.7vw, 0.85rem);
   font-weight: 600;
+  white-space: nowrap;
 }
 
 .chart-bar-label {
-  font-size: 0.7rem;
+  font-size: clamp(0.65rem, 0.7vw, 0.8rem);
   color: var(--muted);
+  max-width: 100%;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.time-heatmap {
+  display: grid;
+  grid-template-columns: repeat(24, minmax(0, 1fr));
+  gap: 0.35rem;
+  padding: 0.5rem 0;
+}
+
+.time-heatmap-cell {
+  min-height: 32px;
+  border-radius: 8px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+}
+
+.time-heatmap-cell.positive {
+  background: rgba(16, 185, 129, calc(0.15 + var(--intensity)));
+  border-color: rgba(16, 185, 129, 0.35);
+}
+
+.time-heatmap-cell.negative {
+  background: rgba(239, 68, 68, calc(0.15 + var(--intensity)));
+  border-color: rgba(239, 68, 68, 0.35);
+}
+
+.time-heatmap-cell.neutral {
+  background: var(--surface2);
+  border-color: var(--border);
+}
+
+.monthly-heatmap-wrapper {
+  display: grid;
+  gap: 1rem;
+}
+
+.monthly-heatmap-summary {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.monthly-heatmap-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.75rem;
+}
+
+.monthly-heatmap {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.35rem;
+}
+
+.heatmap-legend {
+  display: flex;
+  justify-content: space-between;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.symbol-card {
+  padding: 1rem;
+  background: var(--surface2);
+  border-radius: 10px;
+  margin-bottom: 0.5rem;
+  border-left: 3px solid transparent;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.symbol-card.positive {
+  border-left-color: var(--success);
+}
+
+.symbol-card.negative {
+  border-left-color: var(--danger);
+}
+
+.symbol-card.neutral {
+  border-left-color: var(--border);
+}
+
+.symbol-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.symbol-card-value {
+  font-weight: 600;
+}
+
+.emotion-card {
+  padding: 1rem;
+  background: var(--surface2);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  margin-bottom: 0.75rem;
+}
+
+.emotion-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
 }
 
 #data-analysis > * + * {
