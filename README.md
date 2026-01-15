@@ -34,3 +34,8 @@ The journal now uses **IndexedDB** for trades, settings, and saved views, includ
 - Monthly P/L heatmap + strategy performance table in the Analytics tab.
 - Saved views in the Journal tab (save, update, delete filters).
 - Pro exports: JSON/CSV, encrypted backups, and a printable monthly report.
+
+## Changelog (UI overhaul)
+- TradeZella-inspired app shell with sidebar navigation, topbar actions, and widget grid dashboard.
+- New reports hub layout, playbook workspace, and strategy templates tied into the trade entry flow.
+- Trade detail drawer with replay workflow, plus refined calendar heatmap and table styling.

@@ -9,34 +9,72 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="theme-dark">
-    <!-- Header -->
-    <div class="header">
-        <div class="header-left">
-            <div class="logo-section">
-                <div class="logo">📊 Trading Journal Pro</div>
-            </div>
-            <div class="account-block">
-                <div>
-                    <label class="form-label" for="accountSelector">Account</label>
-                    <div class="account-selector">
-                        <select class="account-dropdown" id="accountSelector" onchange="switchAccount()">
-                            <option value="default">Main Account</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="account-actions">
-                    <span class="account-actions-label">Account actions</span>
-                    <div class="segmented">
-                        <button class="add-account-btn btn btn-ghost btn-small" onclick="addNewAccount()">Add</button>
-                        <button class="add-account-btn btn btn-ghost btn-small" onclick="editAccount()">Edit</button>
-                        <button class="add-account-btn btn btn-ghost btn-small" onclick="deleteAccount()">Delete</button>
-                    </div>
+<body class="app-shell">
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-icon">TZ</div>
+                <div class="brand-text">
+                    <span>Trade Journal</span>
+                    <span class="brand-subtitle">Local Pro</span>
                 </div>
             </div>
-        </div>
-        <div class="header-right">
-            <div class="header-stats">
+            <button class="btn btn-primary sidebar-cta" onclick="switchTab('new-trade')">➕ New Trade</button>
+            <nav class="sidebar-nav">
+                <button class="tab-btn active" data-tab="dashboard"><span class="nav-icon">📈</span><span>Dashboard</span></button>
+                <button class="tab-btn" data-tab="journal"><span class="nav-icon">📒</span><span>Trades</span></button>
+                <button class="tab-btn" data-tab="calendar"><span class="nav-icon">🗓️</span><span>Calendar</span></button>
+                <button class="tab-btn" data-tab="analytics"><span class="nav-icon">📊</span><span>Analytics</span></button>
+                <button class="tab-btn" data-tab="data-analysis"><span class="nav-icon">🧾</span><span>Reports Hub</span></button>
+                <button class="tab-btn" data-tab="playbook"><span class="nav-icon">📚</span><span>Playbook</span></button>
+                <button class="tab-btn" data-tab="rules"><span class="nav-icon">📝</span><span>Rules & Notebook</span></button>
+                <button class="tab-btn" data-tab="settings"><span class="nav-icon">⚙️</span><span>Settings</span></button>
+                <button class="tab-btn tab-hidden" data-tab="new-trade" aria-hidden="true"></button>
+            </nav>
+            <div class="sidebar-footer">Local-only journal · No cloud sync</div>
+        </aside>
+        <div class="app-main">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <div class="topbar-title">
+                        <h1>Trading Journal Suite</h1>
+                        <p>TradeZella-inspired workflow for disciplined execution.</p>
+                    </div>
+                    <div class="account-block">
+                        <div>
+                            <label class="form-label" for="accountSelector">Account</label>
+                            <div class="account-selector">
+                                <select class="account-dropdown" id="accountSelector" onchange="switchAccount()">
+                                    <option value="default">Main Account</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="account-actions">
+                            <span class="account-actions-label">Account actions</span>
+                            <div class="segmented">
+                                <button class="add-account-btn btn btn-ghost btn-small" onclick="addNewAccount()">Add</button>
+                                <button class="add-account-btn btn btn-ghost btn-small" onclick="editAccount()">Edit</button>
+                                <button class="add-account-btn btn btn-ghost btn-small" onclick="deleteAccount()">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="topbar-right">
+                    <div class="date-range">
+                        <label class="form-label" for="filterDateFrom">Date range</label>
+                        <div class="date-inputs">
+                            <input type="date" class="form-input" id="filterDateFrom" placeholder="From Date">
+                            <span class="date-separator">→</span>
+                            <input type="date" class="form-input" id="filterDateTo" placeholder="To Date">
+                        </div>
+                    </div>
+                    <div class="topbar-actions">
+                        <button class="btn btn-primary" onclick="switchTab('new-trade')">New Trade</button>
+                        <button class="btn btn-ghost btn-small theme-toggle" id="themeToggle" onclick="toggleTheme()">🌓 Theme</button>
+                    </div>
+                </div>
+            </header>
+            <div class="topbar-meta">
                 <div class="stat-chip">
                     <div class="stat-label">Daily P&L</div>
                     <div class="stat-value positive" id="headerDailyPnL">+$0.00</div>
@@ -54,79 +92,50 @@
                     <div class="stat-value" id="headerTotalTrades">0</div>
                 </div>
             </div>
-            <button class="btn btn-ghost btn-small theme-toggle" id="themeToggle" onclick="toggleTheme()">🌓 Theme</button>
-        </div>
-    </div>
-
-    <!-- Navigation Tabs -->
-    <div class="nav-tabs">
-        <button class="tab-btn active" data-tab="dashboard">📈 Dashboard</button>
-        <button class="tab-btn" data-tab="new-trade">➕ New Trade</button>
-        <button class="tab-btn" data-tab="journal">📖 Journal</button>
-        <button class="tab-btn" data-tab="data-analysis">📊 Data Analysis</button>
-        <button class="tab-btn" data-tab="analytics">📉 Analytics</button>
-        <button class="tab-btn" data-tab="calendar">📅 Calendar</button>
-        <button class="tab-btn" data-tab="playbook">📚 Playbook</button>
-        <button class="tab-btn" data-tab="settings">⚙️ Settings</button>
-    </div>
-
-    <!-- Main Container -->
-    <div class="container">
+            <main class="content">
         <!-- DASHBOARD TAB -->
         <div class="tab-content active" id="dashboard">
-            <div class="metrics-grid">
-                <div class="metric-card kpi-card">
-                    <div class="metric-label">Total P&L</div>
-                    <div class="metric-value positive" id="totalPnL">$0.00</div>
-                    <div class="metric-change positive" id="totalPnLChange">+0% this month</div>
+            <div class="kpi-grid">
+                <div class="kpi-tile">
+                    <div class="kpi-label">Net P/L</div>
+                    <div class="kpi-value positive" id="totalPnL">$0.00</div>
+                    <div class="kpi-meta" id="totalPnLChange">+0% this month</div>
                 </div>
-                <div class="metric-card kpi-card">
-                    <div class="metric-label">Win Rate</div>
-                    <div class="metric-value" id="winRate">0%</div>
+                <div class="kpi-tile">
+                    <div class="kpi-label">Win Rate</div>
+                    <div class="kpi-value" id="winRate">0%</div>
                     <div class="progress-bar">
                         <div class="progress-fill" id="winRateProgress" style="width: 0%"></div>
                     </div>
                 </div>
-                <div class="metric-card kpi-card">
-                    <div class="metric-label">Total Trades</div>
-                    <div class="metric-value" id="totalTrades">0</div>
-                    <div class="metric-change" id="tradesChange">0 this week</div>
+                <div class="kpi-tile">
+                    <div class="kpi-label">Profit Factor</div>
+                    <div class="kpi-value" id="profitFactor">0.00</div>
+                    <div class="kpi-meta">Consistency index</div>
                 </div>
-                <div class="metric-card kpi-card">
-                    <div class="metric-label">Avg Win</div>
-                    <div class="metric-value positive" id="avgWin">$0.00</div>
+                <div class="kpi-tile">
+                    <div class="kpi-label">Avg Win</div>
+                    <div class="kpi-value positive" id="avgWin">$0.00</div>
+                    <div class="kpi-meta">Average per winner</div>
                 </div>
-                <div class="metric-card kpi-card">
-                    <div class="metric-label">Avg Loss</div>
-                    <div class="metric-value negative" id="avgLoss">$0.00</div>
+                <div class="kpi-tile">
+                    <div class="kpi-label">Avg Loss</div>
+                    <div class="kpi-value negative" id="avgLoss">$0.00</div>
+                    <div class="kpi-meta">Average per loser</div>
                 </div>
-                <div class="metric-card kpi-card">
-                    <div class="metric-label">Profit Factor</div>
-                    <div class="metric-value" id="profitFactor">0.00</div>
-                </div>
-                <div class="metric-card kpi-card">
-                    <div class="metric-label">Drawdown</div>
-                    <div class="metric-value negative" id="maxDrawdown">$0.00</div>
-                    <div class="metric-change" id="currentDrawdown">Current: $0.00</div>
-                </div>
-                <div class="metric-card kpi-card">
-                    <div class="metric-label">Expectancy</div>
-                    <div class="metric-value" id="dashboardExpectancy">$0.00</div>
-                    <div class="metric-change" id="dashboardExpectancyMeta">Per trade</div>
-                </div>
-                <div class="metric-card kpi-card">
-                    <div class="metric-label">Rule Violation Cost</div>
-                    <div class="metric-value" id="violationCost">$0.00</div>
-                    <div class="metric-change" id="violationRate">0% off-plan</div>
+                <div class="kpi-tile">
+                    <div class="kpi-label">Trades Count</div>
+                    <div class="kpi-value" id="totalTrades">0</div>
+                    <div class="kpi-meta">Tracked trades</div>
                 </div>
             </div>
 
-            <div class="grid-2">
-                <div class="card">
+            <div class="widget-grid">
+                <div class="card span-8">
                     <div class="card-header">
                         <div>
                             <div class="card-title">P&L Performance</div>
-                            <div class="chart-legend">Net performance by period</div>
+                            <div class="card-subtitle">Cumulative equity curve and period trends</div>
                         </div>
                         <div class="chart-controls">
                             <button class="chart-btn active" onclick="switchPnLChart('daily')">Daily</button>
@@ -139,7 +148,57 @@
                     </div>
                 </div>
 
-                <div class="card">
+                <div class="card span-4 behavior-card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Behavior & Discipline</div>
+                            <div class="card-subtitle">Plan adherence and rule impact</div>
+                        </div>
+                    </div>
+                    <div class="behavior-grid">
+                        <div class="behavior-item">
+                            <div class="behavior-label">Compliance Score</div>
+                            <div class="behavior-value" id="complianceScore">0%</div>
+                            <div class="behavior-meta" id="violationRate">0% off-plan</div>
+                        </div>
+                        <div class="behavior-item">
+                            <div class="behavior-label">Rule Break Cost</div>
+                            <div class="behavior-value" id="violationCost">$0.00</div>
+                            <div class="behavior-meta">Off-plan P/L impact</div>
+                        </div>
+                        <div class="behavior-item">
+                            <div class="behavior-label">Max Drawdown</div>
+                            <div class="behavior-value negative" id="maxDrawdown">$0.00</div>
+                            <div class="behavior-meta" id="currentDrawdown">Current: $0.00</div>
+                        </div>
+                        <div class="behavior-item">
+                            <div class="behavior-label">Expectancy</div>
+                            <div class="behavior-value" id="dashboardExpectancy">$0.00</div>
+                            <div class="behavior-meta" id="dashboardExpectancyMeta">Per trade</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card span-4">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Performance Calendar</div>
+                            <div class="card-subtitle">Daily P/L intensity snapshot</div>
+                        </div>
+                    </div>
+                    <div class="calendar-heatmap">
+                        <div class="calendar-heatmap-legend" id="dashboardCalendarLegend"></div>
+                        <div class="calendar-heatmap-grid" id="dashboardCalendarGrid"></div>
+                    </div>
+                    <div class="calendar-day-detail" id="dashboardDayDetail">
+                        <div class="empty-state">
+                            <span>📆</span>
+                            <div>Select a day to see trade summary</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card span-4">
                     <div class="card-header">
                         <div>
                             <div class="card-title">Recent Trades</div>
@@ -169,22 +228,8 @@
                         </table>
                     </div>
                 </div>
-            </div>
 
-            <div class="grid-3">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">Today's Goals</div>
-                    </div>
-                    <div id="todayGoals">
-                        <div class="empty-state">
-                            <span>✅</span>
-                            <div>Set your daily goals in Settings</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
+                <div class="card span-4">
                     <div class="card-header">
                         <div class="card-title">Top Performing Setups</div>
                     </div>
@@ -196,12 +241,24 @@
                     </div>
                 </div>
 
-                <div class="card">
+                <div class="card span-4">
+                    <div class="card-header">
+                        <div class="card-title">Today's Goals</div>
+                    </div>
+                    <div id="todayGoals">
+                        <div class="empty-state">
+                            <span>✅</span>
+                            <div>Set your daily goals in Settings</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card span-4">
                     <div class="card-header">
                         <div class="card-title">Trading Streak</div>
                     </div>
-                    <div style="text-align: center; padding: 2rem;">
-                        <div style="font-size: 3rem; margin-bottom: 1rem;">🔥</div>
+                    <div class="streak-card">
+                        <div class="streak-icon">🔥</div>
                         <div class="metric-value" id="currentStreak">0</div>
                         <div class="metric-label">Days Active</div>
                     </div>
@@ -336,6 +393,23 @@
                             </div>
                         </div>
 
+                        <div class="form-section" id="strategyTemplateSection">
+                            <div class="form-section-title">Strategy Template</div>
+                            <div class="template-preview">
+                                <div class="template-block">
+                                    <div class="template-label">Checklist</div>
+                                    <ul class="template-checklist" id="strategyTemplateChecklist">
+                                        <li class="template-empty">Select a setup to load its checklist.</li>
+                                    </ul>
+                                </div>
+                                <div class="template-block">
+                                    <div class="template-label">Notes Template</div>
+                                    <textarea class="form-textarea" id="strategyTemplateNotes" readonly placeholder="Template notes will appear here."></textarea>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-secondary btn-small" onclick="applyTemplateToNotes()">Apply template to trade notes</button>
+                        </div>
+
                         <div class="form-section">
                             <div class="form-section-title">Psychology</div>
                             <div class="form-group">
@@ -444,8 +518,6 @@
             <div class="card" style="margin-bottom: 1.5rem;">
                 <div class="filter-toolbar">
                     <div class="filter-toolbar-row">
-                        <input type="date" class="form-input" id="filterDateFrom" placeholder="From Date" style="max-width: 200px;">
-                        <input type="date" class="form-input" id="filterDateTo" placeholder="To Date" style="max-width: 200px;">
                         <select class="form-select" id="filterSymbol" style="max-width: 200px;">
                             <option value="">All Symbols</option>
                         </select>
@@ -519,10 +591,38 @@
         <!-- DATA ANALYSIS TAB -->
         <div class="tab-content" id="data-analysis">
             <div class="analysis-header">
-                <h2>📊 Comprehensive Trade Analysis</h2>
+                <h2>Reports Hub</h2>
                 <div style="color: var(--text-secondary); font-size: 0.9rem;">
-                    Deep dive into your trading performance across all dimensions
+                    TradeZella-style report cards and deep dives across edge, habits, and time.
                 </div>
+            </div>
+
+            <div class="report-grid">
+                <a class="report-card" href="#report-best-worst">
+                    <div class="report-title">Best / Worst Days</div>
+                    <div class="report-metric" id="reportBestDay">$0.00</div>
+                    <div class="report-sub" id="reportBestDayMeta">No data yet</div>
+                </a>
+                <a class="report-card" href="#report-top-setups">
+                    <div class="report-title">Top Setups</div>
+                    <div class="report-metric" id="reportTopSetup">--</div>
+                    <div class="report-sub" id="reportTopSetupMeta">Awaiting trades</div>
+                </a>
+                <a class="report-card" href="#report-bad-habits">
+                    <div class="report-title">Bad Habits</div>
+                    <div class="report-metric" id="reportCompliance">0%</div>
+                    <div class="report-sub" id="reportComplianceMeta">0 off-plan trades</div>
+                </a>
+                <a class="report-card" href="#report-expectancy">
+                    <div class="report-title">Expectancy</div>
+                    <div class="report-metric" id="reportExpectancy">$0.00</div>
+                    <div class="report-sub">Per-trade edge</div>
+                </a>
+                <a class="report-card" href="#report-daytime">
+                    <div class="report-title">Day & Time</div>
+                    <div class="report-metric" id="reportDayTime">--</div>
+                    <div class="report-sub">Best session snapshot</div>
+                </a>
             </div>
 
             <!-- Overall Summary -->
@@ -553,6 +653,73 @@
                 </div>
             </div>
 
+            <div class="grid-2 report-section" id="report-best-worst">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Best Day Report</div>
+                    </div>
+                    <div class="report-highlight">
+                        <div class="metric-value positive" id="reportBestDayValue">$0.00</div>
+                        <div class="metric-label" id="reportBestDayDate">No data yet</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Worst Day Report</div>
+                    </div>
+                    <div class="report-highlight">
+                        <div class="metric-value negative" id="reportWorstDayValue">$0.00</div>
+                        <div class="metric-label" id="reportWorstDayDate">No data yet</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card report-section" id="report-top-setups" style="margin-bottom: 1.5rem;">
+                <div class="card-header">
+                    <div class="card-title">Top Setups Report</div>
+                    <div class="card-subtitle">Best performing setups across all trades</div>
+                </div>
+                <div id="reportTopSetupsList" class="report-list"></div>
+            </div>
+
+            <div class="card report-section" id="report-bad-habits" style="margin-bottom: 1.5rem;">
+                <div class="card-header">
+                    <div class="card-title">Bad Habits Report</div>
+                    <div class="card-subtitle">Plan deviations, rule breaks, and their cost</div>
+                </div>
+                <div class="grid-2">
+                    <div class="metric-card">
+                        <div class="metric-label">Off-plan Trades</div>
+                        <div class="metric-value" id="reportOffPlanTrades">0</div>
+                        <div class="metric-change" id="reportOffPlanRate">0% of trades</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Rule Break Cost</div>
+                        <div class="metric-value" id="reportViolationCost">$0.00</div>
+                        <div class="metric-change">Tracked P/L impact</div>
+                    </div>
+                </div>
+                <div class="report-callout" id="reportBadHabitCallout">No habit data yet.</div>
+            </div>
+
+            <div class="card report-section" id="report-expectancy" style="margin-bottom: 1.5rem;">
+                <div class="card-header">
+                    <div class="card-title">Expectancy Report</div>
+                    <div class="card-subtitle">Measure edge per trade and per setup</div>
+                </div>
+                <div class="grid-2">
+                    <div class="metric-card">
+                        <div class="metric-label">Expectancy / Trade</div>
+                        <div class="metric-value" id="reportExpectancyValue">$0.00</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Avg R Multiple</div>
+                        <div class="metric-value" id="reportExpectancyR">0.00</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="report-section" id="report-daytime">
             <!-- Day of Week Analysis -->
             <div class="card" style="margin-bottom: 1.5rem;">
                 <div class="card-header">
@@ -687,6 +854,7 @@
                         <div class="metric-label">Consecutive Losses</div>
                     </div>
                 </div>
+            </div>
             </div>
         </div>
         <!-- ANALYTICS TAB -->
@@ -923,32 +1091,85 @@
 
         <!-- PLAYBOOK TAB -->
         <div class="tab-content" id="playbook">
-            <div class="card" style="margin-bottom: 1.5rem;">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div class="card playbook-hero" style="margin-bottom: 1.5rem;">
+                <div class="playbook-hero-content">
                     <div>
-                        <div class="card-title">My Trading Playbook</div>
+                        <div class="card-title">Playbook & Strategy Library</div>
                         <div style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.5rem;">
-                            Document your strategies and trading rules
+                            Organize setups, checklist templates, and performance insights in one workspace.
                         </div>
                     </div>
                     <button class="btn btn-primary" onclick="openAddStrategyModal()">+ Add Strategy</button>
                 </div>
             </div>
 
-            <div id="strategiesContainer" class="grid-2">
-                <!-- Strategies will be rendered here -->
+            <div class="playbook-layout">
+                <div class="playbook-list">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Strategy Library</div>
+                            <div class="card-subtitle">Select a setup to review performance and templates.</div>
+                        </div>
+                        <div id="strategiesContainer" class="playbook-cards">
+                            <!-- Strategies will be rendered here -->
+                        </div>
+                    </div>
+                </div>
+                <div class="playbook-detail">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Setup Performance Snapshot</div>
+                        </div>
+                        <div id="playbookPerformanceSnapshot" class="playbook-snapshot">
+                            <div class="empty-state">
+                                <span>📈</span>
+                                <div>Track trades to populate setup performance insights.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card" style="margin-top: 1.5rem;">
+                        <div class="card-header">
+                            <div class="card-title">Template Guidance</div>
+                            <div class="card-subtitle">Checklist and notes templates auto-load when logging trades.</div>
+                        </div>
+                        <ul class="template-guidance">
+                            <li>Define checklist items for your setup execution steps.</li>
+                            <li>Add a notes template to keep reviews consistent.</li>
+                            <li>Apply templates directly into the trade entry workflow.</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
+        </div>
 
-            <div class="card" style="margin-top: 1.5rem;">
+        <!-- RULES TAB -->
+        <div class="tab-content" id="rules">
+            <div class="card" style="margin-bottom: 1.5rem;">
                 <div class="card-header">
-                    <div class="card-title">Trading Rules & Principles</div>
+                    <div>
+                        <div class="card-title">Rules & Notebook</div>
+                        <div class="card-subtitle">Codify risk management, mental game, and review notes.</div>
+                    </div>
                     <button class="btn btn-primary btn-small" onclick="openEditRulesModal()">✏️ Edit Rules</button>
                 </div>
                 <div class="grid-2" id="tradingRulesDisplay">
                     <!-- Rules will be rendered here -->
                 </div>
             </div>
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Notebook Prompts</div>
+                    <div class="card-subtitle">Use these prompts during reviews to build discipline.</div>
+                </div>
+                <div class="notebook-prompts">
+                    <div class="prompt-card">What did I execute perfectly today?</div>
+                    <div class="prompt-card">Where did I deviate, and why?</div>
+                    <div class="prompt-card">What rule protected my capital most?</div>
+                    <div class="prompt-card">What will I repeat or avoid tomorrow?</div>
+                </div>
+            </div>
         </div>
+
     <!-- Add/Edit Strategy Modal -->
     <div class="modal" id="strategyModal">
         <div class="modal-content" style="max-width: 800px;">
@@ -999,6 +1220,16 @@
                             <input type="checkbox" value="1d"> 1d
                         </label>
                     </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Checklist Template</label>
+                    <textarea class="form-textarea" id="strategyChecklistTemplate" placeholder="One checklist item per line..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Notes Template</label>
+                    <textarea class="form-textarea" id="strategyNotesTemplate" placeholder="Template text for trade reviews..."></textarea>
                 </div>
 
                 <div class="form-group">
@@ -1168,14 +1399,16 @@
                 </div>
             </div>
         </div>
+            </main>
+        </div>
     </div>
 
     <div class="toast-container" id="toastContainer"></div>
     <div class="print-report" id="printReport"></div>
 
     <!-- Trade Detail Modal -->
-    <div class="modal" id="tradeDetailModal">
-        <div class="modal-content">
+    <div class="modal drawer-modal" id="tradeDetailModal">
+        <div class="modal-content drawer-content">
             <div class="modal-header">
                 <h2>Trade Details</h2>
                 <button class="modal-close" onclick="closeModal('tradeDetailModal')">×</button>
@@ -1707,6 +1940,11 @@
 
             // Image upload
             document.getElementById('tradeImages').addEventListener('change', previewImages);
+
+            const setupSelect = document.getElementById('tradeSetup');
+            if (setupSelect) setupSelect.addEventListener('change', updateStrategyTemplate);
+
+            updateStrategyTemplate();
         }
 
         function setDefaultDateTime() {
@@ -1779,6 +2017,43 @@
             });
         }
 
+        function updateStrategyTemplate() {
+            const checklistEl = document.getElementById('strategyTemplateChecklist');
+            const notesEl = document.getElementById('strategyTemplateNotes');
+            const setupValue = document.getElementById('tradeSetup')?.value;
+            if (!checklistEl || !notesEl || !setupValue) return;
+
+            const accountStrategies = strategies[currentAccount] || [];
+            const matched = accountStrategies.find(strategy => {
+                const slug = strategy.name.toLowerCase().replace(/\s+/g, '-');
+                return slug === setupValue;
+            });
+
+            if (!matched) {
+                checklistEl.innerHTML = '<li class="template-empty">Select a setup to load its checklist.</li>';
+                notesEl.value = '';
+                return;
+            }
+
+            const checklistItems = matched.checklistTemplate || [];
+            checklistEl.innerHTML = checklistItems.length
+                ? checklistItems.map(item => `<li>${item}</li>`).join('')
+                : '<li class="template-empty">No checklist template added.</li>';
+            notesEl.value = matched.notesTemplate || '';
+        }
+
+        function applyTemplateToNotes() {
+            const notesEl = document.getElementById('tradeNotes');
+            const templateNotes = document.getElementById('strategyTemplateNotes');
+            if (!notesEl || !templateNotes) return;
+            if (!templateNotes.value.trim()) {
+                showToast('No template notes available for this setup', 'warning');
+                return;
+            }
+            notesEl.value = templateNotes.value.trim();
+            showToast('Template applied to trade notes', 'success');
+        }
+
         async function saveTrade(e) {
             e.preventDefault();
 
@@ -1827,6 +2102,7 @@
             });
             document.getElementById('tradeImagesPreview').innerHTML = '';
             document.getElementById('deviationReasonGroup').style.display = 'none';
+            updateStrategyTemplate();
 
             updateDashboard();
             renderJournal();
@@ -1930,6 +2206,11 @@
             violationCostEl.className = `metric-value ${compliance.violationCost >= 0 ? 'positive' : 'negative'}`;
             const offPlanRate = trades.length ? 100 - compliance.followedRate : 0;
             document.getElementById('violationRate').textContent = `${offPlanRate.toFixed(1)}% off-plan`;
+            const complianceScoreEl = document.getElementById('complianceScore');
+            if (complianceScoreEl) {
+                complianceScoreEl.textContent = `${compliance.followedRate.toFixed(1)}%`;
+                complianceScoreEl.className = `behavior-value ${compliance.followedRate >= 70 ? 'positive' : 'negative'}`;
+            }
 
             // P&L Chart
             renderPnLChart(currentPnLView);
@@ -1939,6 +2220,9 @@
 
             // Top setups
             renderTopSetups();
+
+            // Dashboard heatmap
+            renderDashboardHeatmap();
 
             // Streak
             document.getElementById('currentStreak').textContent = calculateStreak();
@@ -2159,6 +2443,104 @@
                     </div>
                 `;
             }).join('');
+        }
+
+        function renderDashboardHeatmap() {
+            const grid = document.getElementById('dashboardCalendarGrid');
+            const legend = document.getElementById('dashboardCalendarLegend');
+            const detail = document.getElementById('dashboardDayDetail');
+            if (!grid || !legend || !detail) return;
+
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = today.getMonth();
+            const monthLabel = today.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+            const dailyPnL = {};
+            const dailyCount = {};
+            trades.forEach(trade => {
+                const dateStr = trade.date.split('T')[0];
+                if (!dailyPnL[dateStr]) dailyPnL[dateStr] = 0;
+                if (!dailyCount[dateStr]) dailyCount[dateStr] = 0;
+                dailyPnL[dateStr] += trade.pnl;
+                dailyCount[dateStr] += 1;
+            });
+
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const startDay = new Date(year, month, 1).getDay();
+            const maxAbs = Math.max(...Object.values(dailyPnL).map(pnl => Math.abs(pnl)), 1);
+
+            legend.innerHTML = `
+                <span>${monthLabel}</span>
+                <span>Daily P/L intensity</span>
+            `;
+
+            grid.innerHTML = '';
+            for (let i = 0; i < startDay; i++) {
+                const empty = document.createElement('div');
+                empty.className = 'heatmap-cell empty';
+                grid.appendChild(empty);
+            }
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const pnl = dailyPnL[dateStr] || 0;
+                const count = dailyCount[dateStr] || 0;
+                const intensity = Math.min(Math.abs(pnl) / maxAbs, 1);
+                const status = pnl > 0 ? 'positive' : pnl < 0 ? 'negative' : 'neutral';
+
+                const cell = document.createElement('button');
+                cell.type = 'button';
+                cell.className = `heatmap-cell ${status}`;
+                cell.style.setProperty('--intensity', intensity.toFixed(2));
+                cell.textContent = day;
+                cell.title = count
+                    ? `${dateStr}: ${formatCurrency(pnl)} (${count} trades)`
+                    : `${dateStr}: No trades`;
+                cell.onclick = () => renderDashboardDayDetail(dateStr);
+                grid.appendChild(cell);
+            }
+        }
+
+        function renderDashboardDayDetail(dateStr) {
+            const detail = document.getElementById('dashboardDayDetail');
+            if (!detail) return;
+            const dayTrades = trades.filter(trade => trade.date.startsWith(dateStr));
+            if (!dayTrades.length) {
+                detail.innerHTML = `
+                    <div class="empty-state">
+                        <span>📆</span>
+                        <div>No trades logged for ${formatDate(dateStr)}</div>
+                    </div>
+                `;
+                return;
+            }
+
+            const pnl = dayTrades.reduce((sum, trade) => sum + trade.pnl, 0);
+            const wins = dayTrades.filter(trade => trade.pnl > 0).length;
+            const winRate = dayTrades.length ? (wins / dayTrades.length) * 100 : 0;
+
+            detail.innerHTML = `
+                <div class="day-detail-header">
+                    <div>
+                        <div class="card-title">${formatDate(dateStr)}</div>
+                        <div class="card-subtitle">${dayTrades.length} trades · ${winRate.toFixed(1)}% win rate</div>
+                    </div>
+                    <div class="metric-value ${pnl >= 0 ? 'positive' : 'negative'}">${formatCurrency(pnl)}</div>
+                </div>
+                <div class="day-detail-list">
+                    ${dayTrades.map(trade => `
+                        <div class="day-detail-item" onclick="viewTradeDetails(${trade.id})">
+                            <div>
+                                <strong>${trade.symbol}</strong>
+                                <span class="badge badge-${trade.direction}">${trade.direction.toUpperCase()}</span>
+                                <span class="day-detail-meta">${formatDateTime(trade.date)}</span>
+                            </div>
+                            <span class="day-detail-pnl ${trade.pnl >= 0 ? 'positive' : 'negative'}">${formatCurrency(trade.pnl)}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
         }
 
         function calculateStreak() {
@@ -2389,19 +2771,19 @@
                 const flagIcon = !followedPlan ? '<span class="strategy-flag" title="Deviated from strategy plan"><span class="flag-icon">⚠️</span></span>' : '';
                 
                 return `
-                    <tr>
+                    <tr class="trade-row" onclick="viewTradeDetails(${trade.id})">
                         <td>${formatDateTime(trade.date)}</td>
                         <td><strong>${trade.symbol}</strong></td>
                         <td><span class="badge badge-${trade.direction}">${trade.direction.toUpperCase()}</span></td>
-                        <td>$${trade.entry.toFixed(2)}</td>
-                        <td>$${trade.exit.toFixed(2)}</td>
-                        <td>${trade.quantity}</td>
-                        <td><span class="badge badge-${trade.pnl >= 0 ? 'win' : 'loss'}">${formatCurrency(trade.pnl)}</span></td>
+                        <td class="text-right">$${trade.entry.toFixed(2)}</td>
+                        <td class="text-right">$${trade.exit.toFixed(2)}</td>
+                        <td class="text-right">${trade.quantity}</td>
+                        <td class="text-right"><span class="badge badge-${trade.pnl >= 0 ? 'win' : 'loss'}">${formatCurrency(trade.pnl)}</span></td>
                         <td>${trade.setup}</td>
                         <td>${flagIcon} ${followedPlan ? '<span style="color: var(--accent-primary);">✓</span>' : '<span style="color: var(--accent-danger);">✗</span>'}</td>
-                        <td>
-                            <button class="btn btn-small btn-secondary" onclick="viewTradeDetails(${trade.id})">View</button>
-                            <button class="btn btn-small btn-danger" onclick="deleteTrade(${trade.id})">Delete</button>
+                        <td class="actions-cell">
+                            <button class="btn btn-small btn-secondary" onclick="event.stopPropagation(); viewTradeDetails(${trade.id})">View</button>
+                            <button class="btn btn-small btn-danger" onclick="event.stopPropagation(); deleteTrade(${trade.id})">Delete</button>
                         </td>
                     </tr>
                 `;
@@ -2413,6 +2795,8 @@
             if (!trade) return;
 
             const followedPlan = trade.followedPlan === 'yes';
+            const replay = trade.replay || { steps: [], mistakes: '', improvements: '' };
+            const replaySteps = ['Thesis', 'Entry', 'Management', 'Exit', 'Review'];
             const imageHtml = (trade.images || []).map(image => {
                 const src = image.blob
                     ? URL.createObjectURL(image.blob)
@@ -2433,90 +2817,165 @@
 
             const content = document.getElementById('tradeDetailContent');
             content.innerHTML = `
-                <div style="display: grid; gap: 1rem;">
-                    <div class="metric-card">
-                        <h3>${trade.symbol} - ${trade.direction.toUpperCase()}</h3>
-                        <p style="color: var(--text-secondary);">${formatDateTime(trade.date)}</p>
-                        ${!followedPlan ? '<div class="badge badge-warning" style="margin-top: 0.5rem;">⚠️ Deviated from Strategy</div>' : '<div class="badge badge-win" style="margin-top: 0.5rem;">✓ Followed Strategy</div>'}
-                    </div>
-
-                    <div class="grid-2">
-                        <div>
-                            <div style="margin-bottom: 0.5rem; color: var(--text-secondary);">Entry Price</div>
-                            <div style="font-size: 1.2rem; font-weight: bold;">$${trade.entry.toFixed(2)}</div>
+                <div class="trade-detail-tabs">
+                    <button class="trade-tab active" data-trade-tab="overview" onclick="switchTradeDetailTab('overview')">Overview</button>
+                    <button class="trade-tab" data-trade-tab="replay" onclick="switchTradeDetailTab('replay')">Replay</button>
+                    <button class="trade-tab" data-trade-tab="attachments" onclick="switchTradeDetailTab('attachments')">Attachments</button>
+                </div>
+                <div class="trade-detail-body">
+                    <div class="trade-detail-panel active" data-trade-panel="overview">
+                        <div class="metric-card">
+                            <h3>${trade.symbol} - ${trade.direction.toUpperCase()}</h3>
+                            <p style="color: var(--text-secondary);">${formatDateTime(trade.date)}</p>
+                            ${!followedPlan ? '<div class="badge badge-warning" style="margin-top: 0.5rem;">⚠️ Deviated from Strategy</div>' : '<div class="badge badge-win" style="margin-top: 0.5rem;">✓ Followed Strategy</div>'}
                         </div>
-                        <div>
-                            <div style="margin-bottom: 0.5rem; color: var(--text-secondary);">Exit Price</div>
-                            <div style="font-size: 1.2rem; font-weight: bold;">$${trade.exit.toFixed(2)}</div>
+
+                        <div class="grid-2">
+                            <div>
+                                <div style="margin-bottom: 0.5rem; color: var(--text-secondary);">Entry Price</div>
+                                <div style="font-size: 1.2rem; font-weight: bold;">$${trade.entry.toFixed(2)}</div>
+                            </div>
+                            <div>
+                                <div style="margin-bottom: 0.5rem; color: var(--text-secondary);">Exit Price</div>
+                                <div style="font-size: 1.2rem; font-weight: bold;">$${trade.exit.toFixed(2)}</div>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="grid-2">
-                        <div>
-                            <div style="margin-bottom: 0.5rem; color: var(--text-secondary);">Quantity</div>
-                            <div style="font-size: 1.2rem; font-weight: bold;">${trade.quantity}</div>
+                        <div class="grid-2">
+                            <div>
+                                <div style="margin-bottom: 0.5rem; color: var(--text-secondary);">Quantity</div>
+                                <div style="font-size: 1.2rem; font-weight: bold;">${trade.quantity}</div>
+                            </div>
+                            <div>
+                                <div style="margin-bottom: 0.5rem; color: var(--text-secondary);">P&L</div>
+                                <div style="font-size: 1.2rem; font-weight: bold; color: ${trade.pnl >= 0 ? 'var(--accent-primary)' : 'var(--accent-danger)'}">${formatCurrency(trade.pnl)}</div>
+                            </div>
                         </div>
-                        <div>
-                            <div style="margin-bottom: 0.5rem; color: var(--text-secondary);">P&L</div>
-                            <div style="font-size: 1.2rem; font-weight: bold; color: ${trade.pnl >= 0 ? 'var(--accent-primary)' : 'var(--accent-danger)'}">${formatCurrency(trade.pnl)}</div>
+
+                        ${trade.stopLoss ? `
+                        <div class="grid-2">
+                            <div>
+                                <div style="margin-bottom: 0.5rem; color: var(--text-secondary);">Stop Loss</div>
+                                <div style="font-size: 1.2rem; font-weight: bold;">$${trade.stopLoss.toFixed(2)}</div>
+                            </div>
+                            <div>
+                                <div style="margin-bottom: 0.5rem; color: var(--text-secondary);">Take Profit</div>
+                                <div style="font-size: 1.2rem; font-weight: bold;">$${trade.takeProfit ? trade.takeProfit.toFixed(2) : 'N/A'}</div>
+                            </div>
                         </div>
-                    </div>
+                        ` : ''}
 
-                    ${trade.stopLoss ? `
-                    <div class="grid-2">
                         <div>
-                            <div style="margin-bottom: 0.5rem; color: var(--text-secondary);">Stop Loss</div>
-                            <div style="font-size: 1.2rem; font-weight: bold;">$${trade.stopLoss.toFixed(2)}</div>
+                            <div style="margin-bottom: 0.5rem; color: var(--text-secondary);">Setup</div>
+                            <div><span class="badge">${trade.setup}</span></div>
                         </div>
+
                         <div>
-                            <div style="margin-bottom: 0.5rem; color: var(--text-secondary);">Take Profit</div>
-                            <div style="font-size: 1.2rem; font-weight: bold;">$${trade.takeProfit ? trade.takeProfit.toFixed(2) : 'N/A'}</div>
+                            <div style="margin-bottom: 0.5rem; color: var(--text-secondary);">Timeframe</div>
+                            <div><span class="badge">${trade.timeframe}</span></div>
                         </div>
-                    </div>
-                    ` : ''}
 
-                    <div>
-                        <div style="margin-bottom: 0.5rem; color: var(--text-secondary);">Setup</div>
-                        <div><span class="badge">${trade.setup}</span></div>
-                    </div>
+                        ${trade.emotion ? `
+                        <div>
+                            <div style="margin-bottom: 0.5rem; color: var(--text-secondary);">Emotional State</div>
+                            <div><span class="badge">${trade.emotion}</span></div>
+                        </div>
+                        ` : ''}
 
-                    <div>
-                        <div style="margin-bottom: 0.5rem; color: var(--text-secondary);">Timeframe</div>
-                        <div><span class="badge">${trade.timeframe}</span></div>
-                    </div>
+                        ${!followedPlan && trade.deviationReason ? `
+                        <div>
+                            <div style="margin-bottom: 0.5rem; color: var(--text-secondary);">Reason for Deviation</div>
+                            <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: 4px; border-left: 3px solid var(--accent-warning);">${trade.deviationReason}</div>
+                        </div>
+                        ` : ''}
 
-                    ${trade.emotion ? `
-                    <div>
-                        <div style="margin-bottom: 0.5rem; color: var(--text-secondary);">Emotional State</div>
-                        <div><span class="badge">${trade.emotion}</span></div>
-                    </div>
-                    ` : ''}
+                        ${trade.notes ? `
+                        <div>
+                            <div style="margin-bottom: 0.5rem; color: var(--text-secondary);">Notes</div>
+                            <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: 4px;">${trade.notes}</div>
+                        </div>
+                        ` : ''}
 
-                    ${!followedPlan && trade.deviationReason ? `
-                    <div>
-                        <div style="margin-bottom: 0.5rem; color: var(--text-secondary);">Reason for Deviation</div>
-                        <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: 4px; border-left: 3px solid var(--accent-warning);">${trade.deviationReason}</div>
+                        ${trade.mistakes ? `
+                        <div>
+                            <div style="margin-bottom: 0.5rem; color: var(--text-secondary);">Mistakes</div>
+                            <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: 4px;">${trade.mistakes}</div>
+                        </div>
+                        ` : ''}
                     </div>
-                    ` : ''}
-
-                    ${trade.notes ? `
-                    <div>
-                        <div style="margin-bottom: 0.5rem; color: var(--text-secondary);">Notes</div>
-                        <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: 4px;">${trade.notes}</div>
+                    <div class="trade-detail-panel" data-trade-panel="replay">
+                        <div class="replay-timeline">
+                            <div class="timeline-step">
+                                <div class="timeline-dot"></div>
+                                <div>
+                                    <div class="timeline-title">Entry</div>
+                                    <div class="timeline-meta">${formatDateTime(trade.date)}</div>
+                                </div>
+                            </div>
+                            <div class="timeline-step">
+                                <div class="timeline-dot"></div>
+                                <div>
+                                    <div class="timeline-title">Exit</div>
+                                    <div class="timeline-meta">Exit price recorded · time not logged</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="replay-section">
+                            <div class="card-title">Lifecycle Checklist</div>
+                            <div class="replay-steps">
+                                ${replaySteps.map(step => `
+                                    <label class="replay-step">
+                                        <input type="checkbox" value="${step}" ${replay.steps.includes(step) ? 'checked' : ''}>
+                                        <span>${step}</span>
+                                    </label>
+                                `).join('')}
+                            </div>
+                        </div>
+                        <div class="replay-section">
+                            <label class="form-label">Mistake moments</label>
+                            <textarea class="form-textarea" id="replayMistakes" placeholder="Tag the moments you would change...">${replay.mistakes || ''}</textarea>
+                        </div>
+                        <div class="replay-section">
+                            <label class="form-label">What I'd do differently</label>
+                            <textarea class="form-textarea" id="replayImprovements" placeholder="Rewrite the play-by-play for next time.">${replay.improvements || ''}</textarea>
+                        </div>
+                        <button class="btn btn-primary btn-small" onclick="saveTradeReplay(${trade.id})">Save Replay Notes</button>
                     </div>
-                    ` : ''}
-
-                    ${trade.mistakes ? `
-                    <div>
-                        <div style="margin-bottom: 0.5rem; color: var(--text-secondary);">Mistakes</div>
-                        <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: 4px;">${trade.mistakes}</div>
+                    <div class="trade-detail-panel" data-trade-panel="attachments">
+                        ${imagesSection || '<div class=\"empty-state\"><span>🖼️</span><div>No attachments uploaded.</div></div>'}
                     </div>
-                    ` : ''}
-                    ${imagesSection}
                 </div>
             `;
 
             document.getElementById('tradeDetailModal').classList.add('active');
+        }
+
+        function switchTradeDetailTab(tabName) {
+            document.querySelectorAll('.trade-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.tradeTab === tabName);
+            });
+            document.querySelectorAll('.trade-detail-panel').forEach(panel => {
+                panel.classList.toggle('active', panel.dataset.tradePanel === tabName);
+            });
+        }
+
+        async function saveTradeReplay(tradeId) {
+            const trade = trades.find(t => t.id === tradeId);
+            if (!trade) return;
+
+            const steps = Array.from(document.querySelectorAll('.replay-step input:checked')).map(input => input.value);
+            const mistakes = document.getElementById('replayMistakes')?.value || '';
+            const improvements = document.getElementById('replayImprovements')?.value || '';
+
+            trade.replay = { steps, mistakes, improvements, updatedAt: new Date().toISOString() };
+            allTrades[currentAccount] = trades.map(stripTradeImages);
+            localStorage.setItem('allTrades', JSON.stringify(allTrades));
+
+            if (isDbReady) {
+                await TradeJournalDB.saveTrade(trade);
+            }
+
+            showToast('Replay notes saved', 'success');
         }
 
         async function deleteTrade(id) {
@@ -2545,6 +3004,28 @@
                 document.getElementById('analysisWinRate').textContent = '0%';
                 document.getElementById('analysisAvgRR').textContent = '0:0';
                 document.getElementById('analysisTotalPnL').textContent = '$0';
+                document.getElementById('reportBestDayValue').textContent = '$0.00';
+                document.getElementById('reportBestDayDate').textContent = 'No data yet';
+                document.getElementById('reportWorstDayValue').textContent = '$0.00';
+                document.getElementById('reportWorstDayDate').textContent = 'No data yet';
+                document.getElementById('reportBestDay').textContent = '$0.00';
+                document.getElementById('reportBestDayMeta').textContent = 'No data yet';
+                document.getElementById('reportTopSetup').textContent = '--';
+                document.getElementById('reportTopSetupMeta').textContent = 'Awaiting trades';
+                document.getElementById('reportCompliance').textContent = '0%';
+                document.getElementById('reportComplianceMeta').textContent = '0 off-plan trades';
+                document.getElementById('reportExpectancy').textContent = '$0.00';
+                document.getElementById('reportDayTime').textContent = '--';
+                document.getElementById('reportOffPlanTrades').textContent = '0';
+                document.getElementById('reportOffPlanRate').textContent = '0% of trades';
+                document.getElementById('reportViolationCost').textContent = '$0.00';
+                document.getElementById('reportBadHabitCallout').textContent = 'No habit data yet.';
+                document.getElementById('reportExpectancyValue').textContent = '$0.00';
+                document.getElementById('reportExpectancyR').textContent = '0.00';
+                const topSetupsList = document.getElementById('reportTopSetupsList');
+                if (topSetupsList) {
+                    topSetupsList.innerHTML = '<div class=\"report-empty\">No setup data yet.</div>';
+                }
                 return;
             }
 
@@ -2560,6 +3041,78 @@
             document.getElementById('analysisAvgRR').textContent = avgRR;
             document.getElementById('analysisTotalPnL').textContent = formatCurrency(stats.totalPnL);
             document.getElementById('analysisTotalPnL').className = `summary-stat-value ${stats.totalPnL >= 0 ? 'positive' : 'negative'}`;
+
+            const expectancy = TradeJournalAnalytics.expectancy(trades);
+            const expectancyPerR = TradeJournalAnalytics.expectancyPerR(trades);
+            const compliance = TradeJournalAnalytics.complianceStats(trades);
+
+            const dailyPnL = {};
+            trades.forEach(trade => {
+                const dateStr = trade.date.split('T')[0];
+                if (!dailyPnL[dateStr]) dailyPnL[dateStr] = 0;
+                dailyPnL[dateStr] += trade.pnl;
+            });
+
+            const sortedDays = Object.entries(dailyPnL).sort((a, b) => b[1] - a[1]);
+            const bestDay = sortedDays[0];
+            const worstDay = sortedDays[sortedDays.length - 1];
+
+            if (bestDay) {
+                document.getElementById('reportBestDayValue').textContent = formatCurrency(bestDay[1]);
+                document.getElementById('reportBestDayDate').textContent = formatDate(bestDay[0]);
+                document.getElementById('reportBestDay').textContent = formatCurrency(bestDay[1]);
+                document.getElementById('reportBestDayMeta').textContent = formatDate(bestDay[0]);
+            }
+
+            if (worstDay) {
+                document.getElementById('reportWorstDayValue').textContent = formatCurrency(worstDay[1]);
+                document.getElementById('reportWorstDayDate').textContent = formatDate(worstDay[0]);
+            }
+
+            const setupStats = TradeJournalAnalytics.setupPerformance(trades);
+            const topSetup = setupStats[0];
+            if (topSetup) {
+                document.getElementById('reportTopSetup').textContent = topSetup.setup;
+                document.getElementById('reportTopSetupMeta').textContent = `${formatCurrency(topSetup.pnl)} · ${topSetup.trades} trades`;
+            }
+
+            const topSetupsList = document.getElementById('reportTopSetupsList');
+            if (topSetupsList) {
+                topSetupsList.innerHTML = setupStats.slice(0, 5).map(setup => `
+                    <div class="report-row">
+                        <div>
+                            <strong>${setup.setup}</strong>
+                            <div class="report-sub">${setup.trades} trades · ${setup.winRate.toFixed(1)}% WR</div>
+                        </div>
+                        <span class="${setup.pnl >= 0 ? 'positive' : 'negative'}">${formatCurrency(setup.pnl)}</span>
+                    </div>
+                `).join('') || '<div class="report-empty">No setup data yet.</div>';
+            }
+
+            const offPlanTrades = trades.filter(trade => trade.followedPlan === 'no');
+            document.getElementById('reportCompliance').textContent = `${compliance.followedRate.toFixed(1)}%`;
+            document.getElementById('reportComplianceMeta').textContent = `${offPlanTrades.length} off-plan trades`;
+            document.getElementById('reportOffPlanTrades').textContent = offPlanTrades.length;
+            document.getElementById('reportOffPlanRate').textContent = `${trades.length ? ((offPlanTrades.length / trades.length) * 100).toFixed(1) : 0}% of trades`;
+            document.getElementById('reportViolationCost').textContent = formatCurrency(compliance.violationCost);
+            document.getElementById('reportBadHabitCallout').textContent = offPlanTrades.length
+                ? `Off-plan trades resulted in ${formatCurrency(compliance.violationCost)} net impact.`
+                : 'No off-plan trades logged yet.';
+
+            document.getElementById('reportExpectancy').textContent = formatCurrency(expectancy);
+            document.getElementById('reportExpectancyValue').textContent = formatCurrency(expectancy);
+            document.getElementById('reportExpectancyR').textContent = expectancyPerR !== null ? expectancyPerR.toFixed(2) : '0.00';
+
+            const weekdayPnL = {};
+            trades.forEach(trade => {
+                const dayName = new Date(trade.date).toLocaleDateString('en-US', { weekday: 'long' });
+                if (!weekdayPnL[dayName]) weekdayPnL[dayName] = 0;
+                weekdayPnL[dayName] += trade.pnl;
+            });
+            const bestDayName = Object.entries(weekdayPnL).sort((a, b) => b[1] - a[1])[0];
+            if (bestDayName) {
+                document.getElementById('reportDayTime').textContent = `${bestDayName[0]} (${formatCurrency(bestDayName[1])})`;
+            }
 
             // Render all analysis sections
             renderDayOfWeekAnalysis();
@@ -4181,6 +4734,7 @@
         function renderPlaybook() {
             const container = document.getElementById('strategiesContainer');
             const accountStrategies = strategies[currentAccount] || [];
+            const snapshot = document.getElementById('playbookPerformanceSnapshot');
 
             if (accountStrategies.length === 0) {
                 container.innerHTML = `
@@ -4190,6 +4744,14 @@
                         <div>Click "Add Strategy" to create your first trading strategy</div>
                     </div>
                 `;
+                if (snapshot) {
+                    snapshot.innerHTML = `
+                        <div class="empty-state">
+                            <span>📈</span>
+                            <div>Track trades to populate setup performance insights.</div>
+                        </div>
+                    `;
+                }
                 return;
             }
 
@@ -4198,7 +4760,7 @@
                 const winRate = stats.total > 0 ? ((stats.wins / stats.total) * 100).toFixed(1) : 0;
 
                 return `
-                    <div class="card">
+                    <div class="card strategy-card">
                         <div class="card-header">
                             <div class="card-title">${strategy.name}</div>
                             <div style="display: flex; gap: 0.5rem;">
@@ -4225,6 +4787,18 @@
                                 </div>
                             ` : ''}
 
+                            ${strategy.checklistTemplate && strategy.checklistTemplate.length ? `
+                                <h4 style="margin-bottom: 0.5rem; color: var(--accent-primary);">Checklist Template:</h4>
+                                <ul style="margin-left: 1.5rem; margin-bottom: 1rem; color: var(--text-secondary);">
+                                    ${strategy.checklistTemplate.map(item => `<li>${item}</li>`).join('')}
+                                </ul>
+                            ` : ''}
+
+                            ${strategy.notesTemplate ? `
+                                <h4 style="margin-bottom: 0.5rem; color: var(--accent-primary);">Notes Template:</h4>
+                                <div style="color: var(--text-secondary); margin-bottom: 1rem;">${strategy.notesTemplate}</div>
+                            ` : ''}
+
                             ${strategy.notes ? `
                                 <h4 style="margin-bottom: 0.5rem; color: var(--accent-primary);">Notes:</h4>
                                 <div style="color: var(--text-secondary); margin-bottom: 1rem;">${strategy.notes}</div>
@@ -4242,6 +4816,36 @@
                     </div>
                 `;
             }).join('');
+
+            renderPlaybookSnapshot();
+        }
+
+        function renderPlaybookSnapshot() {
+            const snapshot = document.getElementById('playbookPerformanceSnapshot');
+            if (!snapshot) return;
+            const setupStats = TradeJournalAnalytics.setupPerformance(trades);
+            if (!setupStats.length) {
+                snapshot.innerHTML = `
+                    <div class="empty-state">
+                        <span>📈</span>
+                        <div>Track trades to populate setup performance insights.</div>
+                    </div>
+                `;
+                return;
+            }
+
+            const top = setupStats.slice(0, 4);
+            snapshot.innerHTML = `
+                <div class="snapshot-grid">
+                    ${top.map(setup => `
+                        <div class="snapshot-card">
+                            <div class="snapshot-title">${setup.setup}</div>
+                            <div class="snapshot-value ${setup.pnl >= 0 ? 'positive' : 'negative'}">${formatCurrency(setup.pnl)}</div>
+                            <div class="snapshot-meta">${setup.trades} trades · ${setup.winRate.toFixed(1)}% WR</div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
         }
 
         function calculateStrategyStats(strategyId) {
@@ -4273,6 +4877,8 @@
             document.getElementById('strategyModalTitle').textContent = 'Add New Strategy';
             document.getElementById('strategyName').value = '';
             document.getElementById('strategyNotes').value = '';
+            document.getElementById('strategyChecklistTemplate').value = '';
+            document.getElementById('strategyNotesTemplate').value = '';
             document.getElementById('editingStrategyId').value = '';
             document.getElementById('entryCriteriaList').innerHTML = '';
             document.getElementById('exitCriteriaList').innerHTML = '';
@@ -4307,6 +4913,8 @@
             document.getElementById('strategyModalTitle').textContent = 'Edit Strategy';
             document.getElementById('strategyName').value = strategy.name;
             document.getElementById('strategyNotes').value = strategy.notes || '';
+            document.getElementById('strategyChecklistTemplate').value = (strategy.checklistTemplate || []).join('\n');
+            document.getElementById('strategyNotesTemplate').value = strategy.notesTemplate || '';
             document.getElementById('editingStrategyId').value = strategyId;
 
             // Populate entry criteria
@@ -4346,6 +4954,8 @@
         function saveStrategy() {
             const name = document.getElementById('strategyName').value.trim();
             const notes = document.getElementById('strategyNotes').value.trim();
+            const checklistTemplateRaw = document.getElementById('strategyChecklistTemplate').value;
+            const notesTemplate = document.getElementById('strategyNotesTemplate').value.trim();
             const editingId = document.getElementById('editingStrategyId').value;
 
             if (!name) {
@@ -4383,6 +4993,11 @@
                 timeframes.push(cb.value);
             });
 
+            const checklistTemplate = checklistTemplateRaw
+                .split('\n')
+                .map(line => line.trim())
+                .filter(Boolean);
+
             const strategyData = {
                 id: editingId || 'strategy_' + Date.now(),
                 name,
@@ -4390,6 +5005,8 @@
                 exitCriteria,
                 timeframes,
                 notes,
+                checklistTemplate,
+                notesTemplate,
                 createdAt: editingId ? undefined : new Date().toISOString()
             };
 
@@ -4467,6 +5084,7 @@
                 ${strategyOptions}
                 <option value="other">Other</option>
             `;
+            updateStrategyTemplate();
         }
 
         // Trading Rules Functions
