@@ -13,7 +13,7 @@
     <div class="app-layout">
         <aside class="sidebar">
             <div class="sidebar-brand">
-                <div class="brand-icon">TZ</div>
+                <div class="brand-icon"><span class="brand-mark">TJ</span></div>
                 <div class="brand-text">
                     <span>Trade Journal</span>
                     <span class="brand-subtitle">Local Pro</span>
@@ -38,7 +38,7 @@
                 <div class="topbar-left">
                     <div class="topbar-title">
                         <h1>Trading Journal Suite</h1>
-                        <p>TradeZella-inspired workflow for disciplined execution.</p>
+                        <p>Disciplined trading, beautifully organized.</p>
                     </div>
                     <div class="account-block">
                         <div>
@@ -3567,16 +3567,16 @@
                 topContainer.innerHTML = topSymbols.map(([symbol, stats], index) => {
                     const winRate = ((stats.wins / stats.total) * 100).toFixed(1);
                     return `
-                        <div style="padding: 1rem; background: var(--bg-tertiary); border-radius: 4px; margin-bottom: 0.5rem; border-left: 3px solid var(--accent-primary);">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                                <div>
-                                    <span style="font-size: 1.2rem; color: var(--text-secondary);">#${index + 1}</span>
-                                    <strong style="font-size: 1.1rem; margin-left: 0.5rem;">${symbol}</strong>
+                        <div class="symbol-card is-top">
+                            <div class="symbol-card-header">
+                                <div class="symbol-card-title">
+                                    <span class="symbol-rank">#${index + 1}</span>
+                                    <strong class="symbol-name">${symbol}</strong>
                                 </div>
-                                <strong style="color: var(--accent-primary); font-size: 1.1rem;">${formatCurrency(stats.pnl)}</strong>
+                                <strong class="symbol-pnl positive">${formatCurrency(stats.pnl)}</strong>
                             </div>
-                            <div style="font-size: 0.85rem; color: var(--text-secondary);">
-                                ${stats.total} trades | Win Rate: ${winRate}% | ${stats.wins}W - ${stats.losses}L
+                            <div class="symbol-meta">
+                                ${stats.total} trades · Win Rate: ${winRate}% · ${stats.wins}W - ${stats.losses}L
                             </div>
                         </div>
                     `;
@@ -3591,16 +3591,16 @@
                 bottomContainer.innerHTML = bottomSymbols.map(([symbol, stats], index) => {
                     const winRate = ((stats.wins / stats.total) * 100).toFixed(1);
                     return `
-                        <div style="padding: 1rem; background: var(--bg-tertiary); border-radius: 4px; margin-bottom: 0.5rem; border-left: 3px solid var(--accent-danger);">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                                <div>
-                                    <span style="font-size: 1.2rem; color: var(--text-secondary);">#${index + 1}</span>
-                                    <strong style="font-size: 1.1rem; margin-left: 0.5rem;">${symbol}</strong>
+                        <div class="symbol-card is-bottom">
+                            <div class="symbol-card-header">
+                                <div class="symbol-card-title">
+                                    <span class="symbol-rank">#${index + 1}</span>
+                                    <strong class="symbol-name">${symbol}</strong>
                                 </div>
-                                <strong style="color: var(--accent-danger); font-size: 1.1rem;">${formatCurrency(stats.pnl)}</strong>
+                                <strong class="symbol-pnl negative">${formatCurrency(stats.pnl)}</strong>
                             </div>
-                            <div style="font-size: 0.85rem; color: var(--text-secondary);">
-                                ${stats.total} trades | Win Rate: ${winRate}% | ${stats.wins}W - ${stats.losses}L
+                            <div class="symbol-meta">
+                                ${stats.total} trades · Win Rate: ${winRate}% · ${stats.wins}W - ${stats.losses}L
                             </div>
                         </div>
                     `;
@@ -3843,7 +3843,7 @@
             const styles = getComputedStyle(document.documentElement);
             const positive = parseThemeColor(styles.getPropertyValue('--accent-primary'));
             const negative = parseThemeColor(styles.getPropertyValue('--accent-danger'));
-            const neutral = parseThemeColor(styles.getPropertyValue('--surface-2'));
+            const neutral = parseThemeColor(styles.getPropertyValue('--surface2'));
 
             const gradientStops = hourlyPnL.map((pnl, index) => {
                 let color = neutral;
@@ -3973,16 +3973,19 @@
             }
 
             const sorted = sortStrategyData(strategyPerformanceData);
-            tbody.innerHTML = sorted.map(item => `
-                <tr>
-                    <td><strong>${item.setup}</strong></td>
-                    <td>${item.trades}</td>
-                    <td>${item.winRate.toFixed(1)}%</td>
-                    <td style="color: ${item.pnl >= 0 ? 'var(--accent-primary)' : 'var(--accent-danger)'}">${formatCurrency(item.pnl)}</td>
-                    <td>${formatCurrency(item.avgWin)}</td>
-                    <td>${formatCurrency(item.avgLoss)}</td>
-                </tr>
-            `).join('');
+            tbody.innerHTML = sorted.map(item => {
+                const pnlClass = item.pnl >= 0 ? 'positive' : 'negative';
+                return `
+                    <tr>
+                        <td><strong>${item.setup}</strong></td>
+                        <td>${item.trades}</td>
+                        <td>${item.winRate.toFixed(1)}%</td>
+                        <td class="${pnlClass}">${formatCurrency(item.pnl)}</td>
+                        <td>${formatCurrency(item.avgWin)}</td>
+                        <td>${formatCurrency(item.avgLoss)}</td>
+                    </tr>
+                `;
+            }).join('');
         }
 
         function sortStrategyData(data) {
@@ -4034,14 +4037,15 @@
                 const winRate = (stats.wins / stats.count * 100).toFixed(1);
                 const avgPnL = stats.pnl / stats.count;
                 
+                const pnlClass = stats.pnl >= 0 ? 'positive' : 'negative';
                 return `
-                    <div style="margin-bottom: 1rem; padding: 1rem; background: var(--bg-tertiary); border-radius: 4px;">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                            <strong style="text-transform: capitalize;">${emotion}</strong>
-                            <span style="color: ${stats.pnl >= 0 ? 'var(--accent-primary)' : 'var(--accent-danger)'}">${formatCurrency(stats.pnl)}</span>
+                    <div class="emotion-card">
+                        <div class="emotion-header">
+                            <strong class="emotion-name">${emotion}</strong>
+                            <span class="emotion-pnl ${pnlClass}">${formatCurrency(stats.pnl)}</span>
                         </div>
-                        <div style="font-size: 0.85rem; color: var(--text-secondary);">
-                            Win Rate: ${winRate}% | Avg P&L: ${formatCurrency(avgPnL)} | Trades: ${stats.count}
+                        <div class="emotion-meta">
+                            Win Rate: ${winRate}% · Avg P&L: ${formatCurrency(avgPnL)} · Trades: ${stats.count}
                         </div>
                     </div>
                 `;
@@ -4105,45 +4109,25 @@
                 const pnl = dailyPnL[dateStr] || 0;
                 
                 const cell = document.createElement('div');
-                cell.style.cssText = `
-                    aspect-ratio: 1;
-                    background: var(--bg-tertiary);
-                    border: 1px solid var(--border-color);
-                    border-radius: 4px;
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    justify-content: center;
-                    font-size: 0.85rem;
-                    cursor: pointer;
-                    transition: all 0.3s;
-                `;
+                cell.className = 'calendar-day-cell';
                 
                 if (pnl > 0) {
-                    cell.style.background = 'rgba(0, 255, 136, 0.1)';
-                    cell.style.borderColor = 'var(--accent-primary)';
+                    cell.classList.add('is-positive');
                 } else if (pnl < 0) {
-                    cell.style.background = 'rgba(255, 51, 102, 0.1)';
-                    cell.style.borderColor = 'var(--accent-danger)';
+                    cell.classList.add('is-negative');
                 }
                 
                 cell.innerHTML = `
-                    <div style="font-size: 1rem; font-weight: 600;">${day}</div>
-                    ${pnl !== 0 ? `<div style="font-size: 0.75rem; margin-top: 0.25rem; color: ${pnl >= 0 ? 'var(--accent-primary)' : 'var(--accent-danger)'}">${formatCurrency(pnl)}</div>` : ''}
+                    <div class="calendar-day-number">${day}</div>
+                    ${pnl !== 0 ? `<div class="calendar-day-pnl ${pnl >= 0 ? 'positive' : 'negative'}">${formatCurrency(pnl)}</div>` : ''}
                 `;
                 
                 cell.addEventListener('mouseover', function() {
-                    this.style.borderColor = 'var(--accent-primary)';
+                    this.classList.add('is-hovered');
                 });
                 
                 cell.addEventListener('mouseout', function() {
-                    if (pnl > 0) {
-                        this.style.borderColor = 'var(--accent-primary)';
-                    } else if (pnl < 0) {
-                        this.style.borderColor = 'var(--accent-danger)';
-                    } else {
-                        this.style.borderColor = 'var(--border-color)';
-                    }
+                    this.classList.remove('is-hovered');
                 });
                 
                 cell.onclick = () => showDayDetails(dateStr);
