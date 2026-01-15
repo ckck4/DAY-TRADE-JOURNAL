@@ -13,7 +13,14 @@
     <div class="app-layout">
         <aside class="sidebar">
             <div class="sidebar-brand">
-                <div class="brand-icon">TZ</div>
+                <div class="brand-icon" aria-hidden="true">
+                    <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+                        <rect x="10" y="18" width="12" height="28" rx="4" stroke="#fff" stroke-width="4"/>
+                        <rect x="30" y="10" width="12" height="44" rx="4" stroke="#fff" stroke-width="4"/>
+                        <path d="M51 16V48" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+                        <circle cx="51" cy="32" r="6" fill="#fff"/>
+                    </svg>
+                </div>
                 <div class="brand-text">
                     <span>Trade Journal</span>
                     <span class="brand-subtitle">Local Pro</span>
@@ -38,7 +45,7 @@
                 <div class="topbar-left">
                     <div class="topbar-title">
                         <h1>Trading Journal Suite</h1>
-                        <p>TradeZella-inspired workflow for disciplined execution.</p>
+                        <p>Analytics • Discipline • Execution.</p>
                     </div>
                     <div class="account-block">
                         <div>
@@ -977,11 +984,11 @@
                             <thead>
                                 <tr>
                                     <th><button class="table-sort" data-sort="setup" onclick="sortStrategyTable('setup')">Setup</button></th>
-                                    <th><button class="table-sort" data-sort="trades" onclick="sortStrategyTable('trades')">Trades</button></th>
-                                    <th><button class="table-sort" data-sort="winRate" onclick="sortStrategyTable('winRate')">Win Rate</button></th>
-                                    <th><button class="table-sort" data-sort="pnl" onclick="sortStrategyTable('pnl')">Net P&L</button></th>
-                                    <th><button class="table-sort" data-sort="avgWin" onclick="sortStrategyTable('avgWin')">Avg Win</button></th>
-                                    <th><button class="table-sort" data-sort="avgLoss" onclick="sortStrategyTable('avgLoss')">Avg Loss</button></th>
+                                    <th class="text-right"><button class="table-sort" data-sort="trades" onclick="sortStrategyTable('trades')">Trades</button></th>
+                                    <th class="text-right"><button class="table-sort" data-sort="winRate" onclick="sortStrategyTable('winRate')">Win Rate</button></th>
+                                    <th class="text-right"><button class="table-sort" data-sort="pnl" onclick="sortStrategyTable('pnl')">Net P&L</button></th>
+                                    <th class="text-right"><button class="table-sort" data-sort="avgWin" onclick="sortStrategyTable('avgWin')">Avg Win</button></th>
+                                    <th class="text-right"><button class="table-sort" data-sort="avgLoss" onclick="sortStrategyTable('avgLoss')">Avg Loss</button></th>
                                 </tr>
                             </thead>
                             <tbody id="strategyPerformanceTable">
@@ -1496,7 +1503,7 @@
     <script src="analytics.js"></script>
     <script src="reports.js"></script>
     <script>
-        // ========== DATA STORAGE ==========
+        // ---------- DATA STORAGE ----------
         let currentAccount = localStorage.getItem('currentAccount') || 'default';
         let accounts = JSON.parse(localStorage.getItem('accounts')) || {
             'default': { name: 'Main Account', type: 'stocks' }
@@ -1565,7 +1572,7 @@
         let currentPnLView = 'daily';
         let sessionCounter = 4;
 
-        // ========== INITIALIZATION ==========
+        // ---------- INITIALIZATION ----------
         document.addEventListener('DOMContentLoaded', async function() {
             initializeTheme();
             initializeTabs();
@@ -1586,7 +1593,7 @@
 	    updateSetupDropdown();
         });
 
-        // ========== THEME TOGGLE ==========
+        // ---------- THEME TOGGLE ----------
         function initializeTheme() {
             const savedTheme = localStorage.getItem('uiTheme');
             const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -1610,7 +1617,7 @@
             applyTheme(isDark ? 'light' : 'dark');
         }
 
-        // ========== TAB NAVIGATION ==========
+        // ---------- TAB NAVIGATION ----------
         function initializeTabs() {
             const tabBtns = document.querySelectorAll('.tab-btn');
             const tabContents = document.querySelectorAll('.tab-content');
@@ -1641,7 +1648,7 @@
             if (tabName === 'journal') renderJournal();
         }
 
-        // ========== STORAGE & MIGRATION ==========
+        // ---------- STORAGE & MIGRATION ----------
         async function initializeStorage() {
             try {
                 await TradeJournalDB.openDB();
@@ -1720,7 +1727,7 @@
             }
         }
 
-        // ========== ACCOUNT MANAGEMENT ==========
+        // ---------- ACCOUNT MANAGEMENT ----------
         function initializeAccountSelector() {
             const selector = document.getElementById('accountSelector');
             selector.innerHTML = '';
@@ -1913,7 +1920,7 @@
             alert('✅ Account deleted successfully.');
         }
 
-        // ========== TRADE FORM ==========
+        // ---------- TRADE FORM ----------
         function initializeTradeForm() {
             // Auto-calculate P&L
             ['tradeEntry', 'tradeExit', 'tradeQuantity', 'tradeDirection', 'tradeSymbol'].forEach(id => {
@@ -2110,10 +2117,16 @@
             renderDataAnalysis();
         }
 
-        // ========== UTILITY FUNCTIONS ==========
+        // ---------- UTILITY FUNCTIONS ----------
         function formatCurrency(value) {
             const prefix = value >= 0 ? '+$' : '-$';
             return prefix + Math.abs(value).toFixed(2);
+        }
+
+        function getValueTone(value) {
+            if (value > 0) return 'positive';
+            if (value < 0) return 'negative';
+            return 'neutral';
         }
 
         function formatDate(dateStr) {
@@ -2158,7 +2171,7 @@
             });
         });
     
-        // ========== DASHBOARD FUNCTIONS ==========
+        // ---------- DASHBOARD FUNCTIONS ----------
         function updateDashboard() {
             const stats = calculateStats();
 
@@ -2487,7 +2500,7 @@
                 const pnl = dailyPnL[dateStr] || 0;
                 const count = dailyCount[dateStr] || 0;
                 const intensity = Math.min(Math.abs(pnl) / maxAbs, 1);
-                const status = pnl > 0 ? 'positive' : pnl < 0 ? 'negative' : 'neutral';
+                const status = getValueTone(pnl);
 
                 const cell = document.createElement('button');
                 cell.type = 'button';
@@ -2568,7 +2581,7 @@
 
             return streak;
         }
-        // ========== JOURNAL FUNCTIONS ==========
+        // ---------- JOURNAL FUNCTIONS ----------
         function renderJournal() {
             const tbody = document.getElementById('journalTable');
             
@@ -2994,7 +3007,7 @@
             renderAnalytics();
             renderDataAnalysis();
         }
-        // ========== DATA ANALYSIS FUNCTIONS ==========
+        // ---------- DATA ANALYSIS FUNCTIONS ----------
         function renderDataAnalysis() {
             if (trades.length === 0) {
                 // Show empty state for all sections
@@ -3566,14 +3579,15 @@
             } else {
                 topContainer.innerHTML = topSymbols.map(([symbol, stats], index) => {
                     const winRate = ((stats.wins / stats.total) * 100).toFixed(1);
+                    const tone = getValueTone(stats.pnl);
                     return `
-                        <div style="padding: 1rem; background: var(--bg-tertiary); border-radius: 4px; margin-bottom: 0.5rem; border-left: 3px solid var(--accent-primary);">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <div class="symbol-card ${tone}">
+                            <div class="symbol-card-header">
                                 <div>
                                     <span style="font-size: 1.2rem; color: var(--text-secondary);">#${index + 1}</span>
                                     <strong style="font-size: 1.1rem; margin-left: 0.5rem;">${symbol}</strong>
                                 </div>
-                                <strong style="color: var(--accent-primary); font-size: 1.1rem;">${formatCurrency(stats.pnl)}</strong>
+                                <strong class="symbol-card-value ${tone}">${formatCurrency(stats.pnl)}</strong>
                             </div>
                             <div style="font-size: 0.85rem; color: var(--text-secondary);">
                                 ${stats.total} trades | Win Rate: ${winRate}% | ${stats.wins}W - ${stats.losses}L
@@ -3590,14 +3604,15 @@
             } else {
                 bottomContainer.innerHTML = bottomSymbols.map(([symbol, stats], index) => {
                     const winRate = ((stats.wins / stats.total) * 100).toFixed(1);
+                    const tone = getValueTone(stats.pnl);
                     return `
-                        <div style="padding: 1rem; background: var(--bg-tertiary); border-radius: 4px; margin-bottom: 0.5rem; border-left: 3px solid var(--accent-danger);">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <div class="symbol-card ${tone}">
+                            <div class="symbol-card-header">
                                 <div>
                                     <span style="font-size: 1.2rem; color: var(--text-secondary);">#${index + 1}</span>
                                     <strong style="font-size: 1.1rem; margin-left: 0.5rem;">${symbol}</strong>
                                 </div>
-                                <strong style="color: var(--accent-danger); font-size: 1.1rem;">${formatCurrency(stats.pnl)}</strong>
+                                <strong class="symbol-card-value ${tone}">${formatCurrency(stats.pnl)}</strong>
                             </div>
                             <div style="font-size: 0.85rem; color: var(--text-secondary);">
                                 ${stats.total} trades | Win Rate: ${winRate}% | ${stats.wins}W - ${stats.losses}L
@@ -3632,7 +3647,7 @@
             document.getElementById('longestWinStreak').textContent = maxWinStreak;
             document.getElementById('longestLossStreak').textContent = maxLossStreak;
         }
-        // ========== ANALYTICS TAB FUNCTIONS ==========
+        // ---------- ANALYTICS TAB FUNCTIONS ----------
         function renderAnalytics() {
             const stats = calculateStats();
 
@@ -3793,38 +3808,6 @@
             });
         }
 
-        function parseThemeColor(value) {
-            if (!value) return { r: 0, g: 0, b: 0 };
-            const trimmed = value.trim();
-            if (trimmed.startsWith('rgb')) {
-                const nums = trimmed.match(/\d+/g) || [0, 0, 0];
-                return { r: Number(nums[0]), g: Number(nums[1]), b: Number(nums[2]) };
-            }
-            const hex = trimmed.replace('#', '');
-            if (hex.length === 3) {
-                const [r, g, b] = hex.split('').map(ch => parseInt(ch + ch, 16));
-                return { r, g, b };
-            }
-            if (hex.length === 6) {
-                return {
-                    r: parseInt(hex.slice(0, 2), 16),
-                    g: parseInt(hex.slice(2, 4), 16),
-                    b: parseInt(hex.slice(4, 6), 16)
-                };
-            }
-            return { r: 0, g: 0, b: 0 };
-        }
-
-        function mixThemeColors(base, neutral, weight) {
-            const mix = (channelBase, channelNeutral) =>
-                Math.round(channelNeutral + (channelBase - channelNeutral) * weight);
-            return {
-                r: mix(base.r, neutral.r),
-                g: mix(base.g, neutral.g),
-                b: mix(base.b, neutral.b)
-            };
-        }
-
         function renderTimeHeatmap() {
             const heatmap = document.getElementById('timeHeatmap');
             if (!heatmap) return;
@@ -3840,40 +3823,18 @@
             });
 
             const maxPnL = Math.max(...hourlyPnL.map(Math.abs), 1);
-            const styles = getComputedStyle(document.documentElement);
-            const positive = parseThemeColor(styles.getPropertyValue('--accent-primary'));
-            const negative = parseThemeColor(styles.getPropertyValue('--accent-danger'));
-            const neutral = parseThemeColor(styles.getPropertyValue('--surface-2'));
-
-            const gradientStops = hourlyPnL.map((pnl, index) => {
-                let color = neutral;
-                if (hourlyCount[index] > 0) {
-                    const intensity = Math.min(Math.abs(pnl) / maxPnL, 1);
-                    const weight = 0.15 + Math.pow(intensity, 0.75) * 0.85;
-                    const base = pnl >= 0 ? positive : negative;
-                    color = mixThemeColors(base, neutral, weight);
-                }
-                const start = (index / 24) * 100;
-                const end = ((index + 1) / 24) * 100;
-                const rgb = `rgb(${color.r}, ${color.g}, ${color.b})`;
-                return `${rgb} ${start}%, ${rgb} ${end}%`;
-            });
-
-            heatmap.style.background = `linear-gradient(90deg, ${gradientStops.join(', ')})`;
-
-            const overlay = document.createElement('div');
-            overlay.className = 'time-heatmap-overlay';
-
             for (let i = 0; i < 24; i++) {
                 const cell = document.createElement('div');
-                cell.className = 'time-heatmap-cell';
-                cell.title = hourlyCount[i] > 0
+                const hasTrades = hourlyCount[i] > 0;
+                const tone = hasTrades ? getValueTone(hourlyPnL[i]) : 'neutral';
+                const intensity = hasTrades ? Math.min(Math.abs(hourlyPnL[i]) / maxPnL, 1) : 0;
+                cell.className = `time-heatmap-cell ${tone}`;
+                cell.style.setProperty('--intensity', intensity.toFixed(2));
+                cell.title = hasTrades
                     ? `${i}:00 — ${formatCurrency(hourlyPnL[i])} (${hourlyCount[i]} trades)`
                     : `${i}:00 — No trades`;
-                overlay.appendChild(cell);
+                heatmap.appendChild(cell);
             }
-
-            heatmap.appendChild(overlay);
         }
 
         function renderMonthlyHeatmap() {
@@ -3928,8 +3889,7 @@
 
             for (let i = 0; i < startDay; i += 1) {
                 const cell = document.createElement('div');
-                cell.className = 'heatmap-cell';
-                cell.style.opacity = 0.2;
+                cell.className = 'heatmap-cell empty';
                 grid.appendChild(cell);
             }
 
@@ -3937,16 +3897,17 @@
                 const dateStr = `${monthKey}-${String(day).padStart(2, '0')}`;
                 const data = dailyPnL[dateStr] || { pnl: 0, count: 0 };
                 const cell = document.createElement('div');
-                cell.className = 'heatmap-cell';
+                const tone = data.count > 0 ? getValueTone(data.pnl) : 'neutral';
+                cell.className = `heatmap-cell ${tone}`;
                 cell.title = data.count > 0
                     ? `${dateStr}: ${formatCurrency(data.pnl)} (${data.count} trades)`
                     : `${dateStr}: No trades`;
 
                 if (data.count > 0) {
                     const intensity = Math.min(Math.abs(data.pnl) / maxPnL, 1);
-                    cell.style.background = data.pnl >= 0 ? 'var(--accent-primary)' : 'var(--accent-danger)';
-                    cell.style.opacity = 0.25 + intensity * 0.75;
-                    cell.style.color = '#fff';
+                    cell.style.setProperty('--intensity', intensity.toFixed(2));
+                } else {
+                    cell.style.setProperty('--intensity', '0');
                 }
 
                 cell.innerHTML = `<span>${day}</span>`;
@@ -3976,11 +3937,11 @@
             tbody.innerHTML = sorted.map(item => `
                 <tr>
                     <td><strong>${item.setup}</strong></td>
-                    <td>${item.trades}</td>
-                    <td>${item.winRate.toFixed(1)}%</td>
-                    <td style="color: ${item.pnl >= 0 ? 'var(--accent-primary)' : 'var(--accent-danger)'}">${formatCurrency(item.pnl)}</td>
-                    <td>${formatCurrency(item.avgWin)}</td>
-                    <td>${formatCurrency(item.avgLoss)}</td>
+                    <td class="text-right">${item.trades}</td>
+                    <td class="text-right">${item.winRate.toFixed(1)}%</td>
+                    <td class="text-right ${getValueTone(item.pnl)}">${formatCurrency(item.pnl)}</td>
+                    <td class="text-right">${formatCurrency(item.avgWin)}</td>
+                    <td class="text-right">${formatCurrency(item.avgLoss)}</td>
                 </tr>
             `).join('');
         }
@@ -4033,14 +3994,15 @@
             container.innerHTML = Object.entries(emotionStats).map(([emotion, stats]) => {
                 const winRate = (stats.wins / stats.count * 100).toFixed(1);
                 const avgPnL = stats.pnl / stats.count;
+                const tone = getValueTone(stats.pnl);
                 
                 return `
-                    <div style="margin-bottom: 1rem; padding: 1rem; background: var(--bg-tertiary); border-radius: 4px;">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <div class="emotion-card ${tone}">
+                        <div class="emotion-card-header">
                             <strong style="text-transform: capitalize;">${emotion}</strong>
-                            <span style="color: ${stats.pnl >= 0 ? 'var(--accent-primary)' : 'var(--accent-danger)'}">${formatCurrency(stats.pnl)}</span>
+                            <span class="metric-value ${tone}">${formatCurrency(stats.pnl)}</span>
                         </div>
-                        <div style="font-size: 0.85rem; color: var(--text-secondary);">
+                        <div class="metric-label">
                             Win Rate: ${winRate}% | Avg P&L: ${formatCurrency(avgPnL)} | Trades: ${stats.count}
                         </div>
                     </div>
@@ -4071,7 +4033,7 @@
             document.getElementById('longestWinStreakAnalytics').textContent = maxWinStreak;
             document.getElementById('longestLossStreakAnalytics').textContent = maxLossStreak;
         }
-        // ========== CALENDAR FUNCTIONS ==========
+        // ---------- CALENDAR FUNCTIONS ----------
         function renderCalendar() {
             const year = currentCalendarDate.getFullYear();
             const month = currentCalendarDate.getMonth();
@@ -4103,49 +4065,15 @@
             for (let day = 1; day <= daysInMonth; day++) {
                 const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                 const pnl = dailyPnL[dateStr] || 0;
-                
+
+                const tone = getValueTone(pnl);
                 const cell = document.createElement('div');
-                cell.style.cssText = `
-                    aspect-ratio: 1;
-                    background: var(--bg-tertiary);
-                    border: 1px solid var(--border-color);
-                    border-radius: 4px;
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    justify-content: center;
-                    font-size: 0.85rem;
-                    cursor: pointer;
-                    transition: all 0.3s;
-                `;
-                
-                if (pnl > 0) {
-                    cell.style.background = 'rgba(0, 255, 136, 0.1)';
-                    cell.style.borderColor = 'var(--accent-primary)';
-                } else if (pnl < 0) {
-                    cell.style.background = 'rgba(255, 51, 102, 0.1)';
-                    cell.style.borderColor = 'var(--accent-danger)';
-                }
-                
+                cell.className = `calendar-day ${tone}`;
                 cell.innerHTML = `
                     <div style="font-size: 1rem; font-weight: 600;">${day}</div>
-                    ${pnl !== 0 ? `<div style="font-size: 0.75rem; margin-top: 0.25rem; color: ${pnl >= 0 ? 'var(--accent-primary)' : 'var(--accent-danger)'}">${formatCurrency(pnl)}</div>` : ''}
+                    ${pnl !== 0 ? `<div class="calendar-day-value ${tone}">${formatCurrency(pnl)}</div>` : ''}
                 `;
-                
-                cell.addEventListener('mouseover', function() {
-                    this.style.borderColor = 'var(--accent-primary)';
-                });
-                
-                cell.addEventListener('mouseout', function() {
-                    if (pnl > 0) {
-                        this.style.borderColor = 'var(--accent-primary)';
-                    } else if (pnl < 0) {
-                        this.style.borderColor = 'var(--accent-danger)';
-                    } else {
-                        this.style.borderColor = 'var(--border-color)';
-                    }
-                });
-                
+
                 cell.onclick = () => showDayDetails(dateStr);
                 grid.appendChild(cell);
             }
@@ -4283,7 +4211,7 @@
             localStorage.setItem('dailyNotes', JSON.stringify(dailyNotes));
             showDayDetails(dateStr);
         }
-        // ========== SETTINGS FUNCTIONS ==========
+        // ---------- SETTINGS FUNCTIONS ----------
         function loadSettings() {
             document.getElementById('settingStartingCapital').value = settings.startingCapital;
             document.getElementById('settingRiskPerTrade').value = settings.riskPerTrade;
@@ -4314,7 +4242,7 @@
             showToast('Settings saved', 'success');
         }
 
-        // ========== SESSION MANAGEMENT ==========
+        // ---------- SESSION MANAGEMENT ----------
         function loadSessions() {
             const container = document.getElementById('sessionsContainer');
             container.innerHTML = '';
@@ -4391,7 +4319,7 @@
             renderSessionAnalysis();
         }
 
-        // ========== DATA MANAGEMENT ==========
+        // ---------- DATA MANAGEMENT ----------
         function downloadBlob(blob, filename) {
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -4729,8 +4657,8 @@
             location.reload();
         }
 
-        // ========== PLAYBOOK ==========
-                // ========== PLAYBOOK FUNCTIONS ==========
+        // ---------- PLAYBOOK ----------
+                // ---------- PLAYBOOK FUNCTIONS ----------
         function renderPlaybook() {
             const container = document.getElementById('strategiesContainer');
             const accountStrategies = strategies[currentAccount] || [];
