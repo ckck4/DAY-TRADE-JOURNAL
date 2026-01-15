@@ -1107,10 +1107,7 @@ body.theme-dark .tab-btn.active {
   line-height: 1.2;
 }
 
-#data-analysis > * + * {
-  margin-top: 1.5rem;
-}
-
+#data-analysis > * + *,
 #analytics > * + * {
   margin-top: 1.5rem;
 }
